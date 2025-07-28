@@ -46,7 +46,7 @@ class _HomePageState extends State<HomePage> {
             const Padding(padding: EdgeInsets.only(top: 50)),
             Text(
               "Draft Home",
-              style: CustomTheme.mainTheme.textTheme.headline1,
+              style: CustomTheme.mainTheme.textTheme.headlineLarge,
             ),
             const Padding(padding: EdgeInsets.only(top: 50)),
             Column(
@@ -104,7 +104,7 @@ class _HomePageState extends State<HomePage> {
             },
             child: Text(
               "SIGN OUT",
-              style: CustomTheme.mainTheme.textTheme.button,
+              style: CustomTheme.mainTheme.textTheme.displayMedium,
             ),
           );
         } else if (state is LoadingState) {
@@ -133,7 +133,7 @@ class _HomePageState extends State<HomePage> {
       },
       child: Text(
         "CHANGE PASSWORD",
-        style: CustomTheme.mainTheme.textTheme.button,
+        style: CustomTheme.mainTheme.textTheme.bodySmall,
       ),
     );
   }

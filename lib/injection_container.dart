@@ -112,7 +112,7 @@ Future<void> init() async {
   //External
   final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   sl.registerLazySingleton(() => sharedPreferences);
-  sl.registerLazySingleton(() => InternetConnectionChecker());
+  sl.registerLazySingleton(() => InternetConnectionChecker.createInstance());
   final client = ChopperClient(interceptors: [
     CurlInterceptor(),
     HttpLoggingInterceptor(),
