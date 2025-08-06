@@ -1,0 +1,18 @@
+{
+  "home": "Home",
+  "profile": "Profile",
+  "message429": "Too many requests. Please try again!",
+  "messageE1": "User name is required.",
+  "messageE2": "Email Address is required.",
+  "messageE3": "Password is required.",
+  "messageE4": "Verification code is required.",
+  "messageE5": "Phone number is required.",
+  "messageE6": "Password must have 8-20 characters including at least 1 uppercase letter, 1 lowercase letter, 1 number and 1 special character.",
+  "messageE7": "Email has not been registered",
+  "messageE8": "Code is wrong\/invalid",
+  "messageE9": "Email Address has been registered.",
+  "messageServerError": "Server Error",
+  "cacheFailure": "Cache failure",
+  "noConnectionFailure": "No connection failure",
+  "unknownError": "Unknown error"
+}

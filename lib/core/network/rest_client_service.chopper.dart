@@ -1,3 +1,4 @@
+// dart format width=80
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
 part of 'rest_client_service.dart';
@@ -6,7 +7,8 @@ part of 'rest_client_service.dart';
 // ChopperGenerator
 // **************************************************************************
 
-// ignore_for_file: always_put_control_body_on_new_line, always_specify_types, prefer_const_declarations, unnecessary_brace_in_string_interps
+// coverage:ignore-file
+// ignore_for_file: type=lint
 final class _$RestClientService extends RestClientService {
   _$RestClientService([ChopperClient? client]) {
     if (client == null) return;
@@ -14,31 +16,14 @@ final class _$RestClientService extends RestClientService {
   }
 
   @override
-  final definitionType = RestClientService;
-
-  @override
-  Future<Response<dynamic>> loginUser(String jsonBody) {
-    final Uri $url = Uri.parse('BASE_URL/tokens');
-    final Map<String, String> $headers = {
-      'Content-type': 'application/json',
-    };
-    final $body = jsonBody;
-    final Request $request = Request(
-      'POST',
-      $url,
-      client.baseUrl,
-      body: $body,
-      headers: $headers,
-    );
-    return client.send<dynamic, dynamic>($request);
-  }
+  final Type definitionType = RestClientService;
 
   @override
   Future<Response<dynamic>> logoutUser(
     String jsonBody,
     String token,
   ) {
-    final Uri $url = Uri.parse('BASE_URL/tokens');
+    final Uri $url = Uri.parse('${API_BASE_URL}/tokens');
     final Map<String, String> $headers = {
       'Authorization': token,
       'Content-type': 'application/json',
@@ -55,14 +40,48 @@ final class _$RestClientService extends RestClientService {
   }
 
   @override
-  Future<Response<dynamic>> changePassword(String jsonBody) {
-    final Uri $url = Uri.parse('BASE_URL/create');
+  Future<Response<dynamic>> refreshToken(String jsonBody) {
+    final Uri $url = Uri.parse('${API_BASE_URL}/refresh-token');
     final Map<String, String> $headers = {
       'Content-type': 'application/json',
     };
     final $body = jsonBody;
     final Request $request = Request(
-      'PUT',
+      'POST',
+      $url,
+      client.baseUrl,
+      body: $body,
+      headers: $headers,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> apiAuthLoginPost(dynamic body) {
+    final Uri $url = Uri.parse('${API_BASE_URL}/auth/login');
+    final Map<String, String> $headers = {
+      'Content-type': 'application/json',
+    };
+    final $body = body;
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      body: $body,
+      headers: $headers,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> apiAuthRegisterPost(dynamic body) {
+    final Uri $url = Uri.parse('${API_BASE_URL}/auth/register');
+    final Map<String, String> $headers = {
+      'Content-type': 'application/json',
+    };
+    final $body = body;
+    final Request $request = Request(
+      'POST',
       $url,
       client.baseUrl,
       body: $body,

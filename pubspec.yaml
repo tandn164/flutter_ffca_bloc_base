@@ -49,13 +49,26 @@ dependencies:
   # Json annotator
   json_annotation: ^4.8.1
   # API manager
-  chopper: ^8.2.0
+  chopper: ^8.3.0
   # Screen responsive
   flutter_screenutil: ^5.9.0
   # Class support
   meta: ^1.9.1
+  # Localization
+  intl: ^0.20.2
+  # Validation
+  formz: ^0.6.0
+  # Env
+  flutter_dotenv: ^5.2.1
   # Log
   logging: ^1.2.0
+  # SVG
+  flutter_svg: ^2.0.9
+  # device info
+  device_info_plus: ^9.1.1
+
+  flutter_localizations:
+    sdk: flutter
 
 dev_dependencies:
   flutter_test:
@@ -69,8 +82,7 @@ dev_dependencies:
   flutter_lints: ^6.0.0
   # flutter pub run build_runner build --delete-conflicting-outputs
   build_runner: ^2.4.6
-  chopper_generator: ^8.2.0
-
+  chopper_generator: ^8.3.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -82,6 +94,12 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  generate: true
+
+  assets:
+    - assets/lottie/
+    - assets/icons/
+    - assets/images/
 
   # To add assets to your application, add an assets section, like this:
   # assets:
