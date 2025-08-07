@@ -11,6 +11,11 @@ import 'package:flutter_bloc_base/screens/authentication/domain/usecase/logout_u
 import 'package:flutter_bloc_base/screens/authentication/domain/usecase/token_usecase.dart';
 import 'package:flutter_bloc_base/screens/authentication/presentation/register_with_email/blocs/register_email_bloc.dart';
 import 'package:flutter_bloc_base/screens/global/presentation/blocs/global/global_bloc.dart';
+import 'package:flutter_bloc_base/screens/user/data/datasources/user_datasource.dart';
+import 'package:flutter_bloc_base/screens/user/data/repositories/user_repository_impl.dart';
+import 'package:flutter_bloc_base/screens/user/domain/repositories/user_repository.dart';
+import 'package:flutter_bloc_base/screens/user/domain/usecases/get_current_user_usecase.dart';
+import 'package:flutter_bloc_base/screens/user/presentation/blocs/user_profile/user_profile_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -32,21 +37,37 @@ Future<void> init() async {
   sl.registerFactory(
         () => RegisterEmailBloc(registerEmailUseCase: sl()),
   );
+  // User module BLoCs
+  sl.registerFactory(
+        () => UserProfileBloc(
+          getCurrentUserUseCase: sl(),
+        ),
+  );
 
   //Use cases
   sl.registerLazySingleton(() => TokenUseCase(repository: sl()));
   sl.registerLazySingleton(() => LogoutUseCase(repository: sl()));
   sl.registerLazySingleton(() => LoginUseCase(repository: sl()));
   sl.registerLazySingleton(() => RegisterEmailUseCase(repository: sl()));
+  // User module use cases
+  sl.registerLazySingleton(() => GetCurrentUserUseCase(repository: sl()));
 
   //Repositories
   sl.registerLazySingleton<AuthenticationRepository>(
         () => AuthenticationRepositoryImpl(dataSource: sl(), networkInfo: sl()),
   );
+  // User module repository
+  sl.registerLazySingleton<UserRepository>(
+        () => UserRepositoryImpl(dataSource: sl(), networkInfo: sl()),
+  );
 
   //Data sources
   sl.registerLazySingleton<AuthenticationDataSource>(
         () => AuthenticationDataSourceImpl(restClientService: sl(), sharedPreferences: sl()),
+  );
+  // User module data source
+  sl.registerLazySingleton<UserDataSource>(
+        () => UserDataSourceImpl(restClientService: sl(), sharedPreferences: sl()),
   );
 
   //Core
@@ -58,13 +79,24 @@ Future<void> init() async {
   final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   sl.registerLazySingleton(() => sharedPreferences);
   sl.registerLazySingleton(() => InternetConnectionChecker.createInstance());
+  
+  // Create callback for token expiry
+  void onTokenExpired() {
+    // Get GlobalBloc instance and add TokenExpiredEvent
+    final globalBloc = sl<GlobalBloc>();
+    globalBloc.add(TokenExpiredEvent());
+  }
+  
   final client = ChopperClient(
     interceptors: [
       CurlInterceptor(),
       HttpLoggingInterceptor(),
       AuthInterceptor(sharedPreferences: sharedPreferences),
     ],
-    authenticator: AppAuthenticator(sharedPreferences: sharedPreferences),
+    authenticator: AppAuthenticator(
+      sharedPreferences: sharedPreferences,
+      onTokenExpired: onTokenExpired,
+    ),
   );
   sl.registerLazySingleton(() => RestClientService.create(client));
 }

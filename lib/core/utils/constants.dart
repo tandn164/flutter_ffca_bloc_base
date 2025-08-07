@@ -1,5 +1,8 @@
+import '../config/environment.dart';
+
 const String USER_ID = 'user_id';
-const String API_BASE_URL = 'BASE_URL'; // add the base url here
+// Use Environment variable for API base URL
+String get API_BASE_URL => Environment.apiBaseUrl;
 const String LOGIN_USER = 'tokens';
 const String CREATE_USER = 'create';
 const String REFRESH_TOKEN = 'refresh-token';

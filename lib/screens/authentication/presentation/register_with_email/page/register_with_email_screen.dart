@@ -1,9 +1,11 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_bloc_base/screens/global/presentation/blocs/global/global_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../../core/utils/widget_util.dart';
+import '../../../../../core/widgets/app_navigation_bar.dart';
 import '../models/models.dart';
 import '../blocs/register_email_bloc.dart';
 import '../../login_with_email/models/models.dart';
@@ -21,6 +23,7 @@ class RegisterWithEmailScreen extends StatefulWidget {
 
 class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
   late RegisterEmailBloc _bloc;
+  late GlobalBloc _globalBloc;
 
   final FocusNode _usernameNode = FocusNode();
   final FocusNode _emailNode = FocusNode();
@@ -38,6 +41,7 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
   void initState() {
     super.initState();
     _bloc = sl<RegisterEmailBloc>();
+    _globalBloc = sl<GlobalBloc>();
   }
 
   @override
@@ -56,13 +60,16 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
             showLoading();
           } else if (state.status.isRegisterSuccess) {
             hideLoading();
-            Navigator.pushNamed(context, MAIN_ROUTE);
+            _globalBloc.add(CheckAuthenticateEvent());
+            _globalBloc.add(ChangeTabEvent(index: 0));
+            Navigator.of(context).pushNamed(MAIN_ROUTE);
           } else if (state.status.isRegisterFail) {
             hideLoading();
           }
         },
         child: Scaffold(
             resizeToAvoidBottomInset: false,
+            appBar: AppNavigationBarVariants.simple(title: l10n.authRegister),
             body: SafeArea(
               maintainBottomViewPadding: true,
               child: _buildTextFields(),
@@ -82,51 +89,51 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
             _passwordNode.unfocus();
             _usernameNode.unfocus();
           },
-          child: SafeArea(
-            child: Container(
-              color: Colors.transparent,
-              padding: EdgeInsets.only(top: 50.h),
-              child: Center(
-                  child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.w),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      "Sign up",
-                      style: TextStyle(
-                          fontSize: 24.sp, fontWeight: FontWeight.w600),
-                    ),
-                    SizedBox(height: 36.h),
-                    Padding(
-                      padding: EdgeInsets.only(bottom: 40.h),
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(
-                            maxHeight: screenSize.height -
-                                padding.bottom -
-                                padding.top -
-                                200.h),
-                        child: SingleChildScrollView(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              _buildUsernameTextField(),
-                              SizedBox(height: 12.h),
-                              _buildEmailTextField(),
-                              SizedBox(height: 12.h),
-                              _buildPasswordTextField(),
-                              SizedBox(height: 28.h),
-                              _buildRegisterButton(),
-                            ],
-                          ),
+          child: Container(
+            color: Colors.transparent,
+            padding: EdgeInsets.only(top: 20.h),
+            child: Center(
+                child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    l10n.createYourAccount,
+                    style: TextStyle(
+                        fontSize: 20.sp, 
+                        fontWeight: FontWeight.w500,
+                        color: Colors.grey[300]),
+                  ),
+                  SizedBox(height: 36.h),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 40.h),
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                          maxHeight: screenSize.height -
+                              padding.bottom -
+                              padding.top -
+                              200.h),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildUsernameTextField(),
+                            SizedBox(height: 12.h),
+                            _buildEmailTextField(),
+                            SizedBox(height: 12.h),
+                            _buildPasswordTextField(),
+                            SizedBox(height: 28.h),
+                            _buildRegisterButton(),
+                          ],
                         ),
                       ),
-                    )
-                  ],
-                ),
-              )),
-            ),
+                    ),
+                  )
+                ],
+              ),
+            )),
           ),
         ),
         Column(
@@ -137,15 +144,15 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
               child: Center(
                   child: Text.rich(TextSpan(children: [
                 TextSpan(
-                    text: "Already have account? ",
+                    text: l10n.alreadyHaveAccount,
                     style: TextStyle(
                         fontSize: 14.sp, fontWeight: FontWeight.w400)),
                 TextSpan(
                     recognizer: TapGestureRecognizer()
                       ..onTap = () {
-                        Navigator.pushReplacementNamed(context, LOGIN_ROUTE);
+                        Navigator.of(context).pushReplacementNamed(LOGIN_ROUTE);
                       },
-                    text: "Sign in",
+                    text: l10n.signIn,
                     style:
                         TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w700))
               ]))),
@@ -205,7 +212,7 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
         return SizedBox(
             height: 44.h,
             child: AppElevatedButton(
-              title: "Register",
+              title: l10n.authRegister,
               onTap: state.isInfoValid
                   ? () {
                       _emailNode.unfocus();

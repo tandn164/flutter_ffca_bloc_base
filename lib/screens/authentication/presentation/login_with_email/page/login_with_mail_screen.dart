@@ -4,12 +4,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../../core/utils/constants.dart';
+import '../../../../../core/utils/widget_util.dart';
+import '../../../../../core/widgets/app_navigation_bar.dart';
 import '../blocs/login_email_bloc.dart';
 import '../models/models.dart';
 import '../../../../global/presentation/blocs/global/global_bloc.dart';
 import '../../../../../core/widgets/app_text_field.dart';
 import '../../../../../injection_container.dart';
-import '../../../../../core/utils/widget_util.dart';
 import '../../../../../core/widgets/app_elevated_button.dart';
 
 class LoginWithEmailScreen extends StatefulWidget {
@@ -56,13 +57,16 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
             showLoading();
           } else if (state.status.isLoginSuccess) {
             hideLoading();
-            Navigator.pushNamed(context, MAIN_ROUTE);
+            _globalBloc.add(CheckAuthenticateEvent());
+            _globalBloc.add(ChangeTabEvent(index: 0));
+            Navigator.of(context).pushNamed(MAIN_ROUTE);
           } else if (state.status.isLoginFail) {
             hideLoading();
           }
         },
         child: Scaffold(
             resizeToAvoidBottomInset: false,
+            appBar: AppNavigationBarVariants.simple(title: l10n.authLogin),
             body: SafeArea(
               maintainBottomViewPadding: true,
               child: _buildTextFields(),
@@ -81,49 +85,49 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
             _emailNode.unfocus();
             _passwordNode.unfocus();
           },
-          child: SafeArea(
-            child: Container(
-              color: Colors.transparent,
-              padding: EdgeInsets.only(top: 50.h),
-              child: Center(
-                  child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.w),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      "Login",
-                      style: TextStyle(
-                          fontSize: 24.sp, fontWeight: FontWeight.w600),
-                    ),
-                    SizedBox(height: 36.h),
-                    Padding(
-                      padding: EdgeInsets.only(bottom: 40.h),
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(
-                            maxHeight: screenSize.height -
-                                padding.bottom -
-                                padding.top -
-                                200.h),
-                        child: SingleChildScrollView(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              _buildEmailTextField(),
-                              SizedBox(height: 12.h),
-                              _buildPasswordTextField(),
-                              SizedBox(height: 28.h),
-                              _buildLoginButton(),
-                            ],
-                          ),
+          child: Container(
+            color: Colors.transparent,
+            padding: EdgeInsets.only(top: 20.h),
+            child: Center(
+                child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    l10n.welcomeBack,
+                    style: TextStyle(
+                        fontSize: 20.sp, 
+                        fontWeight: FontWeight.w500,
+                        color: Colors.grey[300]),
+                  ),
+                  SizedBox(height: 36.h),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 40.h),
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                          maxHeight: screenSize.height -
+                              padding.bottom -
+                              padding.top -
+                              200.h),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildEmailTextField(),
+                            SizedBox(height: 12.h),
+                            _buildPasswordTextField(),
+                            SizedBox(height: 28.h),
+                            _buildLoginButton(),
+                          ],
                         ),
                       ),
-                    )
-                  ],
-                ),
-              )),
-            ),
+                    ),
+                  )
+                ],
+              ),
+            )),
           ),
         ),
         Column(
@@ -134,15 +138,15 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
               child: Center(
                   child: Text.rich(TextSpan(children: [
                 TextSpan(
-                    text: "Do not have account? ",
+                    text: l10n.doNotHaveAccount,
                     style: TextStyle(
                         fontSize: 14.sp, fontWeight: FontWeight.w400)),
                 TextSpan(
                     recognizer: TapGestureRecognizer()
                       ..onTap = () {
-                        Navigator.pushReplacementNamed(context, REGISTER_ROUTE);
+                        Navigator.of(context).pushReplacementNamed(REGISTER_ROUTE);
                       },
-                    text: "Sign up",
+                    text: l10n.signUp,
                     style:
                         TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w700))
               ]))),
@@ -191,7 +195,7 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
         return SizedBox(
             height: 44.h,
             child: AppElevatedButton(
-              title: "Login",
+              title: l10n.authLogin,
               onTap: state.isValid
                   ? () {
                       _emailNode.unfocus();

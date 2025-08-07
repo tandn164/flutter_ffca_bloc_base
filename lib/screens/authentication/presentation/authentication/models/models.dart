@@ -1,1 +1,1 @@
-export 'auth_status.dart';
+export '../../../../../core/enums/auth_status.dart';

@@ -35,13 +35,15 @@ class InitialLocaleEvent extends GlobalEvent {
 }
 
 class ChangeLocaleEvent extends GlobalEvent {
+  final Locale locale;
+  
+  const ChangeLocaleEvent({required this.locale});
+  
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [locale];
 }
 
-class UnMuteVideoEvent extends GlobalEvent {
-  const UnMuteVideoEvent();
-
+class TokenExpiredEvent extends GlobalEvent {
   @override
   List<Object?> get props => [];
 }

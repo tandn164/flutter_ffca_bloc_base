@@ -7,7 +7,6 @@ class GlobalState extends Equatable {
   final bool isIos;
   final double iosVersion;
   final Locale? locale;
-  final bool isMute;
 
   const GlobalState._({
     this.authStatus = AuthStatus.initial,
@@ -15,7 +14,6 @@ class GlobalState extends Equatable {
     this.isIos = true,
     this.iosVersion = 0.0,
     this.locale,
-    this.isMute = true,
   });
 
   const GlobalState.initial() : this._();
@@ -26,14 +24,12 @@ class GlobalState extends Equatable {
     required bool isIos,
     required double iosVersion,
     required Locale? locale,
-    required bool isMute,
   }) : this._(
           authStatus: authStatus,
           tabBarIndex: tabBarIndex,
           isIos: isIos,
           iosVersion: iosVersion,
           locale: locale,
-          isMute: isMute,
         );
 
   GlobalState copyWith({
@@ -42,7 +38,6 @@ class GlobalState extends Equatable {
     bool? isIos,
     double? iosVersion,
     Locale? locale,
-    bool? isMute,
   }) {
     return GlobalState.update(
       authStatus: authStatus ?? this.authStatus,
@@ -50,7 +45,6 @@ class GlobalState extends Equatable {
       isIos: isIos ?? this.isIos,
       iosVersion: iosVersion ?? this.iosVersion,
       locale: locale ?? this.locale,
-      isMute: isMute ?? this.isMute,
     );
   }
 
@@ -60,5 +54,5 @@ class GlobalState extends Equatable {
 
   @override
   List<Object?> get props =>
-      [authStatus, tabBarIndex, isIos, iosVersion, locale, isMute];
+      [authStatus, tabBarIndex, isIos, iosVersion, locale];
 }

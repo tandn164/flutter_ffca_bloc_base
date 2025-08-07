@@ -5,7 +5,7 @@ import 'package:flutter_bloc_base/core/utils/constants.dart';
 
 part "rest_client_service.chopper.dart";
 
-@ChopperApi(baseUrl: API_BASE_URL)
+@ChopperApi()
 abstract class RestClientService extends ChopperService {
   static RestClientService create([ChopperClient? client]) =>
       _$RestClientService(client);

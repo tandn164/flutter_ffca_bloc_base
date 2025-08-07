@@ -3,18 +3,21 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:chopper/chopper.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc_base/interceptor/auth_interceptor.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/base/base_response.dart';
+import '../core/config/environment.dart';
 import '../core/network/rest_client_service.dart';
 import '../core/utils/constants.dart';
 import '../screens/authentication/data/models/login_response.dart';
 
 class AppAuthenticator implements Authenticator {
-  AppAuthenticator({required this.sharedPreferences});
+  AppAuthenticator({required this.sharedPreferences, this.onTokenExpired});
 
   final SharedPreferences sharedPreferences;
+  final VoidCallback? onTokenExpired;
 
   @override
   FutureOr<Request?> authenticate(
@@ -34,6 +37,8 @@ class AppAuthenticator implements Authenticator {
         print(
           '[AppAuthenticator] Unable to refresh token, retry count exceeded',
         );
+        // Notify that token has expired and refresh failed
+        onTokenExpired?.call();
         return null;
       }
 
@@ -49,6 +54,8 @@ class AppAuthenticator implements Authenticator {
         );
       } catch (e) {
         print('[AppAuthenticator] Unable to refresh token: $e');
+        // Notify that token has expired and refresh failed
+        onTokenExpired?.call();
         return null;
       }
     }
@@ -84,7 +91,7 @@ class AppAuthenticator implements Authenticator {
         AuthInterceptor(sharedPreferences: sharedPreferences),
       ],
       converter: const JsonConverter(),
-      baseUrl: Uri.https(API_BASE_URL),
+      baseUrl: Uri.https(Environment.apiBaseUrl),
     );
     final client = RestClientService.create(chopper);
 

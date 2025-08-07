@@ -1,10 +1,11 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/services.dart';
 
 import '../global/presentation/blocs/global/global_bloc.dart';
-import '../home/home.dart';
+import '../home/home_screen.dart';
 import '../../core/widgets/bottom_navigation.dart';
+import '../user/presentation/pages/profile_screen.dart';
 
 class MainTabBar extends StatefulWidget {
   const MainTabBar({super.key});
@@ -23,13 +24,19 @@ class _MainTabBarState extends State<MainTabBar> {
     super.initState();
     _pageController = PageController();
     _screens = [
-      const HomePage(),
+      const HomeScreen(),
       Container(),
       Container(),
       Container(),
-      Container(),
+      const ProfileScreen(),
     ];
     _globalBloc = context.read<GlobalBloc>();
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 
   @override

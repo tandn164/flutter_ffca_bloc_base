@@ -14,7 +14,7 @@ abstract class Failure extends Equatable {
 
 class ServerFailure extends Failure {
 
-  const ServerFailure(super.message);
+  const ServerFailure([String message = 'Server error occurred']) : super(message);
 
   factory ServerFailure.fromObject(Object? object) {
     final meta = Meta.fromJson(jsonDecode(object as String)["meta"]);
@@ -34,14 +34,28 @@ class ServerFailure extends Failure {
 }
 
 class CacheFailure extends Failure {
-  const CacheFailure(super.message);
+  const CacheFailure([String message = 'Cache error occurred']) : super(message);
+
+  @override
+  List<Object?> get props => [message];
+}
+
+class NetworkFailure extends Failure {
+  const NetworkFailure([String message = 'No internet connection']) : super(message);
+
+  @override
+  List<Object?> get props => [message];
+}
+
+class ValidationFailure extends Failure {
+  const ValidationFailure([String message = 'Validation error occurred']) : super(message);
 
   @override
   List<Object?> get props => [message];
 }
 
 class NoConnectionFailure extends Failure {
-  const NoConnectionFailure(super.message);
+  const NoConnectionFailure([String message = 'No connection available']) : super(message);
 
   @override
   List<Object?> get props => [message];

@@ -452,18 +452,109 @@ output-class: S
 
 ### Code Generation Commands
 
-```bash
-# Generate Swagger API clients
-flutter pub run build_runner build
+This project uses code generation for several purposes. Here's how to work with generated files:
 
-# Generate localization files  
-flutter gen-l10n
+#### 📦 JSON Serialization (DTOs)
+
+**What gets generated:**
+- `*.g.dart` files for DTOs with `@JsonSerializable()` annotation
+- Automatic `fromJson()` and `toJson()` methods
+
+**Example DTO setup:**
+```dart
+// data/models/user_dto.dart
+import 'package:json_annotation/json_annotation.dart';
+
+part 'user_dto.g.dart';
+
+@JsonSerializable()
+class UserDto {
+  @JsonKey(name: 'user_id')
+  final String id;
+  
+  @JsonKey(name: 'email_address')
+  final String email;
+  
+  const UserDto({required this.id, required this.email});
+  
+  factory UserDto.fromJson(Map<String, dynamic> json) => _$UserDtoFromJson(json);
+  Map<String, dynamic> toJson() => _$UserDtoToJson(this);
+}
+```
+
+#### 🌐 HTTP Client (Chopper)
+
+**What gets generated:**
+- `*.chopper.dart` files for REST API clients
+- HTTP method implementations
+
+**Example API client setup:**
+```dart
+// network/rest_client_service.dart
+import 'package:chopper/chopper.dart';
+
+part 'rest_client_service.chopper.dart';
+
+@ChopperApi()
+abstract class RestClientService extends ChopperService {
+  static RestClientService create([ChopperClient? client]) => _$RestClientService(client);
+  
+  @POST(path: '/users')
+  Future<Response> createUser(@Body() UserDto user);
+  
+  @GET(path: '/users/{id}')
+  Future<Response> getUser(@Path('id') String userId);
+}
+```
+
+#### 🔧 Generation Commands
+
+```bash
+# 🚀 Automated Generation (Recommended)
+./scripts/generate_code.sh                    # Normal generation with verification
+./scripts/generate_code.sh --clean           # Clean and regenerate
+
+# 📋 Manual Commands
+# Generate all code (JSON, Chopper, etc.)
+flutter pub run build_runner build
 
 # Clean and regenerate (when conflicts occur)
 flutter pub run build_runner build --delete-conflicting-outputs
 
-# Watch for changes (development)
+# Watch for changes during development (automatic regeneration)
 flutter pub run build_runner watch
+
+# Generate localization files
+flutter gen-l10n
+
+# Generate only specific files (optional)
+flutter pub run build_runner build --build-filter="lib/screens/user/data/models/*.dart"
+```
+
+#### 🚨 Important Notes
+
+1. **Never edit `.g.dart` or `.chopper.dart` files manually** - they will be overwritten
+2. **Always run generation after**:
+   - Adding new `@JsonSerializable()` classes
+   - Adding new `@ChopperApi()` methods
+   - Changing DTO field names or annotations
+   - Pulling new code from repository
+3. **If you get conflicts**, use `--delete-conflicting-outputs` flag
+4. **During development**, use `watch` command for automatic regeneration
+
+#### 📁 Generated Files Structure
+
+```
+lib/
+├── core/network/
+│   ├── rest_client_service.dart
+│   └── rest_client_service.chopper.dart    # Generated
+├── screens/user/data/models/
+│   ├── user_dto.dart
+│   └── user_dto.g.dart                     # Generated
+└── screens/authentication/data/models/
+    ├── authentication_dtos.dart
+    └── authentication_dtos.g.dart          # Generated
 ```
 
 ## 🏭 Dependency Injection Setup
@@ -497,7 +588,6 @@ Future<void> init() async {
   // BLoCs
   sl.registerFactory(() => LoginBloc(sl()));
 }
-```
 
 ## 🎯 BLoC Pattern Implementation
 
@@ -542,7 +632,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
   }
 }
-```
 
 ## 🚀 Getting Started
 

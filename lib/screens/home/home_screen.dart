@@ -8,14 +8,14 @@ import 'package:flutter_bloc_base/core/widgets/custom_snak_bar.dart';
 import '../../injection_container.dart';
 import '../global/presentation/blocs/global/global_bloc.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
 
   @override
-  State<StatefulWidget> createState() => _HomePageState();
+  State<StatefulWidget> createState() => _HomeScreenState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomeScreenState extends State<HomeScreen> {
   final _scaffoldKey = GlobalKey<ScaffoldMessengerState>();
   late CustomSnackBar _snackBar;
   late GlobalBloc _globalBloc;

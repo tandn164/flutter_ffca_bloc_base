@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
 
@@ -6,7 +7,8 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
-import '../../../../authentication/presentation/authentication/models/auth_status.dart';
+import '../../../../../core/enums/auth_status.dart';
+import '../../../../../core/usecases/usecase.dart';
 import '../../../../authentication/domain/usecase/logout_usecase.dart';
 import '../../../../authentication/domain/usecase/token_usecase.dart';
 import '../../../../../generated/l10n/l10n.dart';
@@ -28,25 +30,26 @@ class GlobalBloc extends Bloc<GlobalEvent, GlobalState> {
     on<GetDeviceInfoEvent>(_onGetDeviceInfo);
     on<InitialLocaleEvent>(_onInitialLocale);
     on<ChangeLocaleEvent>(_onChangeLocale);
+    on<TokenExpiredEvent>(_onTokenExpired);
   }
 
-  _onCheckAuth(CheckAuthenticateEvent event, Emitter<GlobalState> emit) async {
-    var result = await checkTokenUseCase(());
+  Future<void> _onCheckAuth(CheckAuthenticateEvent event, Emitter<GlobalState> emit) async {
+    var result = await checkTokenUseCase(NoParams());
     result.fold((l) => emit(state.copyWith(authStatus: AuthStatus.guest)),
         (r) => emit(state.copyWith(authStatus: AuthStatus.user)));
   }
 
-  _onLogout(LogoutEvent event, Emitter<GlobalState> emit) async {
-    var result = await logoutUseCase(());
+  Future<void> _onLogout(LogoutEvent event, Emitter<GlobalState> emit) async {
+    var result = await logoutUseCase(NoParams());
     result.fold((l) => emit(state.copyWith(authStatus: AuthStatus.user)),
         (r) => emit(state.copyWith(authStatus: AuthStatus.guest)));
   }
 
-  _onChangeTab(ChangeTabEvent event, Emitter<GlobalState> emit) {
+  void _onChangeTab(ChangeTabEvent event, Emitter<GlobalState> emit) {
     emit(state.copyWith(tabBarIndex: event.index));
   }
 
-  _onGetDeviceInfo(GetDeviceInfoEvent event, Emitter<GlobalState> emit) async {
+  Future<void> _onGetDeviceInfo(GetDeviceInfoEvent event, Emitter<GlobalState> emit) async {
     if (Platform.isIOS) {
       final deviceInfoPlugin = DeviceInfoPlugin();
       final deviceInfo = await deviceInfoPlugin.deviceInfo;
@@ -58,15 +61,19 @@ class GlobalBloc extends Bloc<GlobalEvent, GlobalState> {
     }
   }
 
-  _onInitialLocale(InitialLocaleEvent event, Emitter<GlobalState> emit) {
-    emit(state.copyWith(locale: S.supportedLocales.first));
+  void _onInitialLocale(InitialLocaleEvent event, Emitter<GlobalState> emit) {
+    Locale deviceLocale = PlatformDispatcher.instance.locale;
+    List<Locale> supportedLocales = S.supportedLocales;
+    Locale initialLocale = supportedLocales.contains(deviceLocale) ? deviceLocale : const Locale('en');
+    emit(state.copyWith(locale: initialLocale));
   }
 
-  _onChangeLocale(ChangeLocaleEvent event, Emitter<GlobalState> emit) {
-    if (S.supportedLocales.indexOf(state.locale!) == 0) {
-      emit(state.copyWith(locale: S.supportedLocales[1]));
-    } else {
-      emit(state.copyWith(locale: S.supportedLocales[0]));
-    }
+  void _onChangeLocale(ChangeLocaleEvent event, Emitter<GlobalState> emit) {
+    emit(state.copyWith(locale: event.locale));
+  }
+
+  Future<void> _onTokenExpired(TokenExpiredEvent event, Emitter<GlobalState> emit) async {
+    // Clear token and set auth status to guest when token expires
+    emit(state.copyWith(authStatus: AuthStatus.guest));
   }
 }

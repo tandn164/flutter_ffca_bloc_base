@@ -23,7 +23,7 @@ final class _$RestClientService extends RestClientService {
     String jsonBody,
     String token,
   ) {
-    final Uri $url = Uri.parse('${API_BASE_URL}/tokens');
+    final Uri $url = Uri.parse('tokens');
     final Map<String, String> $headers = {
       'Authorization': token,
       'Content-type': 'application/json',
@@ -41,7 +41,7 @@ final class _$RestClientService extends RestClientService {
 
   @override
   Future<Response<dynamic>> refreshToken(String jsonBody) {
-    final Uri $url = Uri.parse('${API_BASE_URL}/refresh-token');
+    final Uri $url = Uri.parse('refresh-token');
     final Map<String, String> $headers = {
       'Content-type': 'application/json',
     };
@@ -58,7 +58,7 @@ final class _$RestClientService extends RestClientService {
 
   @override
   Future<Response<dynamic>> apiAuthLoginPost(dynamic body) {
-    final Uri $url = Uri.parse('${API_BASE_URL}/auth/login');
+    final Uri $url = Uri.parse('/auth/login');
     final Map<String, String> $headers = {
       'Content-type': 'application/json',
     };
@@ -75,7 +75,7 @@ final class _$RestClientService extends RestClientService {
 
   @override
   Future<Response<dynamic>> apiAuthRegisterPost(dynamic body) {
-    final Uri $url = Uri.parse('${API_BASE_URL}/auth/register');
+    final Uri $url = Uri.parse('/auth/register');
     final Map<String, String> $headers = {
       'Content-type': 'application/json',
     };

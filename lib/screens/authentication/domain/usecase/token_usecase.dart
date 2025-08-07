@@ -5,13 +5,13 @@ import '../../../../core/utils/widget_util.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/usecases/usecase.dart';
 
-class TokenUseCase implements UseCase<String, void> {
+class TokenUseCase implements UseCase<String, NoParams> {
   final AuthenticationRepository repository;
 
   TokenUseCase({required this.repository});
 
   @override
-  Future<Either<Failure, String>> call(void params) async {
+  Future<Either<Failure, String>> call(NoParams params) async {
     final response = await repository.fetchLastSession();
     return response.fold((l) => left(l), (r) {
       if (r.accessToken == null) {

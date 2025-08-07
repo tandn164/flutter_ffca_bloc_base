@@ -8,6 +8,9 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:logging/logging.dart';
 
+import 'core/config/app_config.dart';
+import 'core/config/environment.dart';
+import 'core/enums/auth_status.dart';
 import 'core/utils/app_assets.dart';
 import 'core/utils/constants.dart';
 import 'core/utils/router.dart' as router;
@@ -25,6 +28,15 @@ Future<void> main() async {
   _setupLogging();
   
   try {
+    // Initialize environment variables first
+    await Environment.init();
+    
+    // Log environment info in debug mode
+    if (Environment.debugMode) {
+      debugPrint('=== Environment Configuration ===');
+      debugPrint(Environment.environmentInfo);
+    }
+
     // Initialize dependency injection
     await di.init();
     
@@ -111,15 +123,27 @@ class CleanArchitectureWithBloc extends StatelessWidget {
 
   void _handleGlobalStateChanges(BuildContext context, GlobalState state) {
     // Handle authentication status changes
-    // Add navigation logic or other side effects here
+    if (state.authStatus == AuthStatus.guest) {
+      // Navigate to authentication screen when user becomes guest (token expired)
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        // Use navigatorKey instead of context to ensure we have proper Navigator
+        if (navigatorKey.currentContext != null) {
+          Navigator.of(navigatorKey.currentContext!).pushNamedAndRemoveUntil(
+            AUTH_ROUTE,
+            (route) => false, // Remove all previous routes
+          );
+        }
+      });
+    }
+    // Add other navigation logic or side effects here
   }
 
   Widget _buildMaterialApp(GlobalState globalState) {
     return MaterialApp(
-      title: 'Flutter BLoC Base',
+      title: AppConfig.app.displayName,
       theme: CustomTheme.mainTheme,
       themeMode: ThemeMode.dark,
-      debugShowCheckedModeBanner: false,
+      debugShowCheckedModeBanner: AppConfig.debug.showDebugBanner,
       onGenerateRoute: router.Router.generateRoute,
       initialRoute: SPLASH_ROUTE,
       navigatorKey: navigatorKey,
@@ -157,25 +181,32 @@ class ErrorApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Error',
+      title: 'Error', // Keep this simple since l10n might not be available
       theme: ThemeData.dark(),
-      home: const Scaffold(
+      localizationsDelegates: const [
+        S.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: S.supportedLocales,
+      home: Scaffold(
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
+              const Icon(
                 Icons.error_outline,
                 size: 64,
                 color: Colors.red,
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               Text(
-                'Failed to initialize app',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                l10n.appInitError,
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 8),
-              Text('Please restart the application'),
+              const SizedBox(height: 8),
+              Text(l10n.appRestartMessage),
             ],
           ),
         ),
