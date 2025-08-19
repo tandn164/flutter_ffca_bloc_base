@@ -40,17 +40,15 @@ final class _$RestClientService extends RestClientService {
   }
 
   @override
-  Future<Response<dynamic>> refreshToken(String jsonBody) {
+  Future<Response<dynamic>> refreshToken() {
     final Uri $url = Uri.parse('refresh-token');
     final Map<String, String> $headers = {
       'Content-type': 'application/json',
     };
-    final $body = jsonBody;
     final Request $request = Request(
       'POST',
       $url,
       client.baseUrl,
-      body: $body,
       headers: $headers,
     );
     return client.send<dynamic, dynamic>($request);

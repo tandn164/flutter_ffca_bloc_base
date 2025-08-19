@@ -510,10 +510,6 @@ abstract class RestClientService extends ChopperService {
 #### 🔧 Generation Commands
 
 ```bash
-# 🚀 Automated Generation (Recommended)
-./scripts/generate_code.sh                    # Normal generation with verification
-./scripts/generate_code.sh --clean           # Clean and regenerate
-
 # 📋 Manual Commands
 # Generate all code (JSON, Chopper, etc.)
 flutter pub run build_runner build

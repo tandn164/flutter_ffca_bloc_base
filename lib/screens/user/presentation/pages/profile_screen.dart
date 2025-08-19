@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_bloc_base/core/utils/constants.dart';
+import 'package:flutter_bloc_base/screens/authentication/presentation/authentication/blocs/authentication_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../blocs/user_profile/user_profile_bloc.dart';
 import '../blocs/user_profile/user_profile_event.dart';
@@ -9,11 +9,8 @@ import '../models/user_profile_model.dart';
 import '../../../../core/widgets/language_switcher.dart';
 import '../../../../core/widgets/app_navigation_bar.dart';
 import '../../../../core/utils/widget_util.dart';
-import '../../../../screens/global/presentation/blocs/global/global_bloc.dart';
 import '../../../../injection_container.dart';
 
-/// Simple Profile screen that displays basic user information
-/// Shows essential user info with logout and language change options
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
@@ -115,7 +112,7 @@ class ProfileScreen extends StatelessWidget {
     return Center(
       child: CircleAvatar(
         radius: 50.r,
-        backgroundColor: Colors.blue.withOpacity(0.1),
+        backgroundColor: Colors.blue,
         child: Text(
           profileModel.user.initials,
           style: TextStyle(
@@ -269,7 +266,7 @@ class ProfileScreen extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                context.read<GlobalBloc>().add(LogoutEvent());
+                context.read<AuthenticationBloc>().add(LogoutEvent());
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,

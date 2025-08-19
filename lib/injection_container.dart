@@ -6,6 +6,7 @@ import 'package:flutter_bloc_base/screens/authentication/data/repositories/authe
 import 'package:flutter_bloc_base/screens/authentication/domain/repositories/authentication_repository.dart';
 import 'package:flutter_bloc_base/screens/authentication/domain/usecase/login_usecase.dart';
 import 'package:flutter_bloc_base/screens/authentication/domain/usecase/register_email_usecase.dart';
+import 'package:flutter_bloc_base/screens/authentication/presentation/authentication/blocs/authentication_bloc.dart';
 import 'package:flutter_bloc_base/screens/authentication/presentation/login_with_email/blocs/login_email_bloc.dart';
 import 'package:flutter_bloc_base/screens/authentication/domain/usecase/logout_usecase.dart';
 import 'package:flutter_bloc_base/screens/authentication/domain/usecase/token_usecase.dart';
@@ -29,7 +30,10 @@ final sl = GetIt.instance;
 Future<void> init() async {
   //Blocs
   sl.registerFactory(
-        () => GlobalBloc(checkTokenUseCase: sl(), logoutUseCase: sl()),
+        () => GlobalBloc(),
+  );
+  sl.registerFactory(
+        () => AuthenticationBloc(checkTokenUseCase: sl(), logoutUseCase: sl()),
   );
   sl.registerFactory(
         () => LoginEmailBloc(loginUseCase: sl()),
@@ -82,9 +86,8 @@ Future<void> init() async {
   
   // Create callback for token expiry
   void onTokenExpired() {
-    // Get GlobalBloc instance and add TokenExpiredEvent
-    final globalBloc = sl<GlobalBloc>();
-    globalBloc.add(TokenExpiredEvent());
+    final authBloc = sl<AuthenticationBloc>();
+    authBloc.add(TokenExpiredEvent());
   }
   
   final client = ChopperClient(

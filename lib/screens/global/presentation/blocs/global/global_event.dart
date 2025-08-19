@@ -5,12 +5,7 @@ abstract class GlobalEvent extends Equatable {
   const GlobalEvent([List props = const <dynamic>[]]) : super();
 }
 
-class CheckAuthenticateEvent extends GlobalEvent {
-  @override
-  List<Object?> get props => [];
-}
-
-class LogoutEvent extends GlobalEvent {
+class SplashDisplayedEvent extends GlobalEvent {
   @override
   List<Object?> get props => [];
 }
@@ -41,9 +36,4 @@ class ChangeLocaleEvent extends GlobalEvent {
   
   @override
   List<Object?> get props => [locale];
-}
-
-class TokenExpiredEvent extends GlobalEvent {
-  @override
-  List<Object?> get props => [];
 }

@@ -57,7 +57,7 @@ dependencies:
   # Localization
   intl: ^0.20.2
   # Validation
-  formz: ^0.6.0
+  formz: ^0.8.0
   # Env
   flutter_dotenv: ^5.2.1
   # Log
@@ -65,7 +65,7 @@ dependencies:
   # SVG
   flutter_svg: ^2.0.9
   # device info
-  device_info_plus: ^9.1.1
+  device_info_plus: ^11.5.0
 
   flutter_localizations:
     sdk: flutter

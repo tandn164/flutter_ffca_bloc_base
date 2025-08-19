@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_bloc_base/screens/authentication/presentation/authentication/blocs/authentication_bloc.dart';
 import 'package:flutter_bloc_base/screens/global/presentation/blocs/global/global_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -24,6 +25,7 @@ class RegisterWithEmailScreen extends StatefulWidget {
 class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
   late RegisterEmailBloc _bloc;
   late GlobalBloc _globalBloc;
+  late AuthenticationBloc _authBloc;
 
   final FocusNode _usernameNode = FocusNode();
   final FocusNode _emailNode = FocusNode();
@@ -60,7 +62,7 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
             showLoading();
           } else if (state.status.isRegisterSuccess) {
             hideLoading();
-            _globalBloc.add(CheckAuthenticateEvent());
+            _authBloc.add(CheckAuthenticateEvent());
             _globalBloc.add(ChangeTabEvent(index: 0));
             Navigator.of(context).pushNamed(MAIN_ROUTE);
           } else if (state.status.isRegisterFail) {

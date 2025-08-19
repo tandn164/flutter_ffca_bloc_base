@@ -6,28 +6,16 @@ part of 'authentication_dtos.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-LoginEmailDto _$LoginEmailDtoFromJson(Map<String, dynamic> json) =>
-    LoginEmailDto(
-      email: json['email'] as String,
-      password: json['password'] as String,
+LoginSessionDTO _$LoginSessionDTOFromJson(Map<String, dynamic> json) =>
+    LoginSessionDTO(
+      accessToken: json['accessToken'] as String?,
+      refreshToken: json['refreshToken'] as String?,
+      isVerified: json['isVerified'] as bool?,
     );
 
-Map<String, dynamic> _$LoginEmailDtoToJson(LoginEmailDto instance) =>
+Map<String, dynamic> _$LoginSessionDTOToJson(LoginSessionDTO instance) =>
     <String, dynamic>{
-      'email': instance.email,
-      'password': instance.password,
-    };
-
-RegisterEmailDto _$RegisterEmailDtoFromJson(Map<String, dynamic> json) =>
-    RegisterEmailDto(
-      email: json['email'] as String,
-      password: json['password'] as String,
-      username: json['username'] as String,
-    );
-
-Map<String, dynamic> _$RegisterEmailDtoToJson(RegisterEmailDto instance) =>
-    <String, dynamic>{
-      'email': instance.email,
-      'password': instance.password,
-      'username': instance.username,
+      'accessToken': instance.accessToken,
+      'refreshToken': instance.refreshToken,
+      'isVerified': instance.isVerified,
     };

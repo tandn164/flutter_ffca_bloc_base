@@ -10,55 +10,45 @@ import 'package:logging/logging.dart';
 
 import 'core/config/app_config.dart';
 import 'core/config/environment.dart';
-import 'core/enums/auth_status.dart';
 import 'core/utils/app_assets.dart';
 import 'core/utils/constants.dart';
 import 'core/utils/router.dart' as router;
 import 'core/utils/theme.dart';
 import 'core/utils/widget_util.dart';
+import 'core/widgets/app_bloc_provider.dart';
 import 'generated/l10n/l10n.dart';
 import 'injection_container.dart' as di;
 import 'screens/global/presentation/blocs/global/global_bloc.dart';
 
 Future<void> main() async {
-  // Ensure Flutter is initialized
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Set up logging before initializing dependencies
   _setupLogging();
   
   try {
-    // Initialize environment variables first
     await Environment.init();
     
-    // Log environment info in debug mode
     if (Environment.debugMode) {
       debugPrint('=== Environment Configuration ===');
       debugPrint(Environment.environmentInfo);
     }
 
-    // Initialize dependency injection
     await di.init();
     
-    // Precache assets for better performance
     await AppAssets.precacheAssets();
     
-    // Configure system UI
     _configureSystemUI();
     
     runApp(const CleanArchitectureWithBloc());
   } catch (error, stackTrace) {
-    // Log initialization errors
     debugPrint('App initialization failed: $error');
     debugPrint('Stack trace: $stackTrace');
     
-    // Run app with error state or fallback
     runApp(const ErrorApp());
   }
 }
 
 void _configureSystemUI() {
-  // Configure Android-specific UI
   if (Platform.isAndroid) {
     SystemChrome.setEnabledSystemUIMode(
       SystemUiMode.immersiveSticky,
@@ -66,7 +56,6 @@ void _configureSystemUI() {
     );
   }
   
-  // Configure status bar
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
@@ -103,39 +92,15 @@ class CleanArchitectureWithBloc extends StatelessWidget {
     return MediaQuery.withClampedTextScaling(
       minScaleFactor: 0.8,
       maxScaleFactor: 1.2,
-      child: MultiBlocProvider(
-        providers: [
-          BlocProvider(
-            create: (_) => di.sl<GlobalBloc>()
-              ..add(InitialLocaleEvent()),
-          ),
-          // Add other BLoCs here as needed
-        ],
-        child: BlocConsumer<GlobalBloc, GlobalState>(
-          listenWhen: (previous, current) => 
-              previous.authStatus != current.authStatus,
-          listener: _handleGlobalStateChanges,
-          builder: (context, state) => _buildMaterialApp(state),
+      child: AppBlocProvider(
+        child: Builder(
+          builder: (context) {
+            final globalState = context.watch<GlobalBloc>().state;
+            return _buildMaterialApp(globalState);
+          },
         ),
       ),
     );
-  }
-
-  void _handleGlobalStateChanges(BuildContext context, GlobalState state) {
-    // Handle authentication status changes
-    if (state.authStatus == AuthStatus.guest) {
-      // Navigate to authentication screen when user becomes guest (token expired)
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        // Use navigatorKey instead of context to ensure we have proper Navigator
-        if (navigatorKey.currentContext != null) {
-          Navigator.of(navigatorKey.currentContext!).pushNamedAndRemoveUntil(
-            AUTH_ROUTE,
-            (route) => false, // Remove all previous routes
-          );
-        }
-      });
-    }
-    // Add other navigation logic or side effects here
   }
 
   Widget _buildMaterialApp(GlobalState globalState) {
@@ -181,7 +146,7 @@ class ErrorApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Error', // Keep this simple since l10n might not be available
+      title: 'Error',
       theme: ThemeData.dark(),
       localizationsDelegates: const [
         S.delegate,

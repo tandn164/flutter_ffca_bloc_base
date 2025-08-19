@@ -2,10 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:chopper/chopper.dart';
+import 'package:flutter_bloc_base/screens/authentication/data/models/authentication_dtos.dart';
+import 'package:flutter_bloc_base/screens/authentication/domain/entities/login_session.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/utils/constants.dart';
-import '../screens/authentication/data/models/login_response.dart';
 
 class AuthInterceptor implements Interceptor {
   const AuthInterceptor({required this.sharedPreferences});
@@ -15,11 +16,11 @@ class AuthInterceptor implements Interceptor {
   @override
   FutureOr<Response<BodyType>> intercept<BodyType>(Chain<BodyType> chain) async {
     String? session = sharedPreferences.getString(LOGIN_SESSION);
-    LoginResponse? response;
+    LoginSession? response;
     String accessToken = "";
 
     if (session != null) {
-      response = LoginResponse.fromJson(jsonDecode(session));
+      response = LoginSessionDTO.fromJson(jsonDecode(session));
     }
 
     if (session != null && response?.accessToken != null) {
@@ -31,10 +32,6 @@ class AuthInterceptor implements Interceptor {
       HttpHeaders.authorizationHeader,
       accessToken,
       override: false,
-    );
-
-    print(
-      '[AuthInterceptor] accessToken: ${updatedRequest.headers[HttpHeaders.authorizationHeader]}',
     );
 
     return chain.proceed(updatedRequest);

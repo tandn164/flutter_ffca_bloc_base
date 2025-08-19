@@ -35,7 +35,7 @@ class BottomNavigation extends StatelessWidget {
                     Expanded(
                       child: _BottomNavigationItem(
                         svgName: AppAssets.icHome,
-                        svgNameSelected: AppAssets.icHome,
+                        svgNameSelected: AppAssets.icHomeSelected,
                         title: l10n.home,
                         active: currentIndex == 0,
                         onTap: () => onItemSelected(0),

@@ -1,18 +1,18 @@
 import 'dart:convert';
+import 'package:flutter_bloc_base/screens/authentication/domain/entities/login_session.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../core/network/rest_client_service.dart';
-import '../models/login_response.dart';
 import '../../../../core/base/base_response.dart';
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/utils/constants.dart';
 import '../models/authentication_dtos.dart';
 
 abstract class AuthenticationDataSource {
-  Future<LoginResponse> getLastLoginSession();
-  Future<void> cacheSession(LoginResponse login);
-  Future<BaseResponse<LoginResponse>> login(String email, String password);
-  Future<BaseResponse<LoginResponse>> register(
+  Future<LoginSession> getLastLoginSession();
+  Future<void> cacheSession(LoginSession login);
+  Future<BaseResponse<LoginSession>> login(String email, String password);
+  Future<BaseResponse<LoginSession>> register(
       String username, String email, String password);
   Future<void> logout();
 }
@@ -25,75 +25,54 @@ class AuthenticationDataSourceImpl extends AuthenticationDataSource {
       {required this.restClientService, required this.sharedPreferences});
 
   @override
-  Future<void> cacheSession(LoginResponse login) {
+  Future<void> cacheSession(LoginSession login) {
     return sharedPreferences.setString(LOGIN_SESSION, jsonEncode(login));
   }
 
   @override
-  Future<LoginResponse> getLastLoginSession() {
+  Future<LoginSession> getLastLoginSession() {
     String? login = sharedPreferences.getString(LOGIN_SESSION);
     if (login == null) {
       throw CacheException();
     }
-    return Future.value(LoginResponse.fromJson(jsonDecode(login)));
+    return Future.value(LoginSessionDTO.fromJson(jsonDecode(login)));
   }
 
   @override
-  Future<BaseResponse<LoginResponse>> login(
+  Future<BaseResponse<LoginSession>> login(
       String email, String password) async {
-    final body =
-        LoginEmailDto(email: email, password: password);
+    final response = await restClientService.apiAuthLoginPost(jsonEncode({
+      email: email,
+      password: password,
+    }));
 
-    // final response = await restClientService.apiAuthLoginPost(body.toJson());
-    //
-    // if (response.statusCode != 200) {
-    //   throw ServerException.fromObject(response.error);
-    // }
+    if (response.statusCode != 200) {
+      throw ServerException.fromObject(response.error);
+    }
 
-    Future.delayed(Duration(seconds: 1));
-    final response = getMockLoginResponse();
-    
-    return BaseResponse<LoginResponse>.fromJson(
-        response, (data) => LoginResponse.fromJson(data));
+    return BaseResponse<LoginSession>.fromJson(
+        response.body, (data) => LoginSessionDTO.fromJson(data));
   }
 
   @override
-  Future<BaseResponse<LoginResponse>> register(
+  Future<BaseResponse<LoginSession>> register(
       String username, String email, String password) async {
-    final body = RegisterEmailDto(
-        email: email, password: password, username: username);
+    final body = jsonEncode({
+      email: email, password: password, username: username
+    });
 
-    // final response = await restClientService.apiAuthRegisterPost(body.toJson());
-    //
-    // if (response.statusCode != 200) {
-    //   throw ServerException.fromObject(response.error);
-    // }
+    final response = await restClientService.apiAuthRegisterPost(body);
 
-    Future.delayed(Duration(seconds: 1));
-    final response = getMockLoginResponse();
+    if (response.statusCode != 200) {
+      throw ServerException.fromObject(response.error);
+    }
 
-    return BaseResponse<LoginResponse>.fromJson(
-        response, (data) => LoginResponse.fromJson(data));
+    return BaseResponse<LoginSession>.fromJson(
+        response.body, (data) => LoginSessionDTO.fromJson(data));
   }
 
   @override
   Future<void> logout() async {
     await sharedPreferences.remove(LOGIN_SESSION);
-  }
-
-  Map<String, dynamic> getMockLoginResponse() {
-    return {
-      "data": {
-        "accessToken": "mock_access_token",
-        "refreshToken": "mock_refresh_token",
-        "isVerified": true
-      },
-      "meta": {
-        "code": 200,
-        "msg": "",
-        "message": "",
-        "errorCode": "",
-      }
-    };
   }
 }

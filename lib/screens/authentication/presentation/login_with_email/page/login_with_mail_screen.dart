@@ -6,9 +6,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../../core/utils/constants.dart';
 import '../../../../../core/utils/widget_util.dart';
 import '../../../../../core/widgets/app_navigation_bar.dart';
+import '../../authentication/blocs/authentication_bloc.dart';
 import '../blocs/login_email_bloc.dart';
 import '../models/models.dart';
-import '../../../../global/presentation/blocs/global/global_bloc.dart';
 import '../../../../../core/widgets/app_text_field.dart';
 import '../../../../../injection_container.dart';
 import '../../../../../core/widgets/app_elevated_button.dart';
@@ -22,7 +22,7 @@ class LoginWithEmailScreen extends StatefulWidget {
 
 class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
   late LoginEmailBloc _bloc;
-  late GlobalBloc _globalBloc;
+  late AuthenticationBloc _authBloc;
 
   final FocusNode _emailNode = FocusNode();
   final FocusNode _passwordNode = FocusNode();
@@ -38,7 +38,7 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
   void initState() {
     super.initState();
     _bloc = sl<LoginEmailBloc>();
-    _globalBloc = context.read<GlobalBloc>();
+    _authBloc = context.read<AuthenticationBloc>();
   }
 
   @override
@@ -57,8 +57,7 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
             showLoading();
           } else if (state.status.isLoginSuccess) {
             hideLoading();
-            _globalBloc.add(CheckAuthenticateEvent());
-            _globalBloc.add(ChangeTabEvent(index: 0));
+            _authBloc.add(CheckAuthenticateEvent());
             Navigator.of(context).pushNamed(MAIN_ROUTE);
           } else if (state.status.isLoginFail) {
             hideLoading();

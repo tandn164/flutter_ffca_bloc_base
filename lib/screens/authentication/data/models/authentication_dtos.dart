@@ -1,39 +1,20 @@
 import 'package:json_annotation/json_annotation.dart';
 
+import '../../domain/entities/login_session.dart';
+
 part 'authentication_dtos.g.dart';
 
 @JsonSerializable()
-class LoginEmailDto {
-  final String email;
-  final String password;
-
-  const LoginEmailDto({
-    required this.email,
-    required this.password
+class LoginSessionDTO extends LoginSession {
+  LoginSessionDTO({
+    super.accessToken,
+    super.refreshToken,
+    super.isVerified,
   });
 
-  /// Connect the generated [_$LoginEmailDtoFromJson] function to the `fromJson` factory.
-  factory LoginEmailDto.fromJson(Map<String, dynamic> json) => _$LoginEmailDtoFromJson(json);
+  /// Connect the generated [_$LoginSessionDTOFromJson] function to the `fromJson` factory.
+  factory LoginSessionDTO.fromJson(Map<String, dynamic> json) => _$LoginSessionDTOFromJson(json);
 
-  /// Connect the generated [_$LoginEmailDtoToJson] function to the `toJson` method.
-  Map<String, dynamic> toJson() => _$LoginEmailDtoToJson(this);
-}
-
-@JsonSerializable()
-class RegisterEmailDto {
-  final String email;
-  final String password;
-  final String username;
-
-  const RegisterEmailDto({
-    required this.email,
-    required this.password,
-    required this.username,
-  });
-
-  /// Connect the generated [_$RegisterEmailDtoFromJson] function to the `fromJson` factory.
-  factory RegisterEmailDto.fromJson(Map<String, dynamic> json) => _$RegisterEmailDtoFromJson(json);
-
-  /// Connect the generated [_$RegisterEmailDtoToJson] function to the `toJson` method.
-  Map<String, dynamic> toJson() => _$RegisterEmailDtoToJson(this);
+  /// Connect the generated [_$LoginSessionDTOToJson] function to the `toJson` method.
+  Map<String, dynamic> toJson() => _$LoginSessionDTOToJson(this);
 }

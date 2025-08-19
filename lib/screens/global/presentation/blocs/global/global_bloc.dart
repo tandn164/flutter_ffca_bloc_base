@@ -7,42 +7,18 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
-import '../../../../../core/enums/auth_status.dart';
-import '../../../../../core/usecases/usecase.dart';
-import '../../../../authentication/domain/usecase/logout_usecase.dart';
-import '../../../../authentication/domain/usecase/token_usecase.dart';
 import '../../../../../generated/l10n/l10n.dart';
 
 part 'global_event.dart';
 part 'global_state.dart';
 
 class GlobalBloc extends Bloc<GlobalEvent, GlobalState> {
-  final TokenUseCase checkTokenUseCase;
-  final LogoutUseCase logoutUseCase;
-
-  GlobalBloc({
-    required this.checkTokenUseCase,
-    required this.logoutUseCase,
-  }) : super(const GlobalState.initial()) {
-    on<CheckAuthenticateEvent>(_onCheckAuth);
-    on<LogoutEvent>(_onLogout);
+  GlobalBloc() : super(const GlobalState.initial()) {
     on<ChangeTabEvent>(_onChangeTab);
     on<GetDeviceInfoEvent>(_onGetDeviceInfo);
     on<InitialLocaleEvent>(_onInitialLocale);
     on<ChangeLocaleEvent>(_onChangeLocale);
-    on<TokenExpiredEvent>(_onTokenExpired);
-  }
-
-  Future<void> _onCheckAuth(CheckAuthenticateEvent event, Emitter<GlobalState> emit) async {
-    var result = await checkTokenUseCase(NoParams());
-    result.fold((l) => emit(state.copyWith(authStatus: AuthStatus.guest)),
-        (r) => emit(state.copyWith(authStatus: AuthStatus.user)));
-  }
-
-  Future<void> _onLogout(LogoutEvent event, Emitter<GlobalState> emit) async {
-    var result = await logoutUseCase(NoParams());
-    result.fold((l) => emit(state.copyWith(authStatus: AuthStatus.user)),
-        (r) => emit(state.copyWith(authStatus: AuthStatus.guest)));
+    on<SplashDisplayedEvent>(_onSplashDisplayed);
   }
 
   void _onChangeTab(ChangeTabEvent event, Emitter<GlobalState> emit) {
@@ -72,8 +48,7 @@ class GlobalBloc extends Bloc<GlobalEvent, GlobalState> {
     emit(state.copyWith(locale: event.locale));
   }
 
-  Future<void> _onTokenExpired(TokenExpiredEvent event, Emitter<GlobalState> emit) async {
-    // Clear token and set auth status to guest when token expires
-    emit(state.copyWith(authStatus: AuthStatus.guest));
+  void _onSplashDisplayed(SplashDisplayedEvent event, Emitter<GlobalState> emit) {
+    emit(state.copyWith(splashDisplayed: true));
   }
 }

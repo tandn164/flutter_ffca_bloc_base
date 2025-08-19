@@ -15,7 +15,7 @@ abstract class RestClientService extends ChopperService {
       @Body() String jsonBody, @Header("Authorization") String token);
 
   @POST(path: REFRESH_TOKEN, headers: {'Content-type': 'application/json'})
-  Future<Response> refreshToken(@Body() String jsonBody);
+  Future<Response> refreshToken();
 
   // Authentication endpoints
   @POST(path: '/auth/login', headers: {'Content-type': 'application/json'})
