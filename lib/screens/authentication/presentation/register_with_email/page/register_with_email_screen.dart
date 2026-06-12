@@ -24,7 +24,6 @@ class RegisterWithEmailScreen extends StatefulWidget {
 
 class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
   late RegisterEmailBloc _bloc;
-  late GlobalBloc _globalBloc;
   late AuthenticationBloc _authBloc;
 
   final FocusNode _usernameNode = FocusNode();
@@ -43,7 +42,7 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
   void initState() {
     super.initState();
     _bloc = sl<RegisterEmailBloc>();
-    _globalBloc = sl<GlobalBloc>();
+    _authBloc = context.read<AuthenticationBloc>();
   }
 
   @override
@@ -63,7 +62,6 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
           } else if (state.status.isRegisterSuccess) {
             hideLoading();
             _authBloc.add(CheckAuthenticateEvent());
-            _globalBloc.add(ChangeTabEvent(index: 0));
             Navigator.of(context).pushNamed(MAIN_ROUTE);
           } else if (state.status.isRegisterFail) {
             hideLoading();

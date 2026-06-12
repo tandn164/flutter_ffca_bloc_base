@@ -1,0 +1,4 @@
+# melos_managed_dependency_overrides: composable_core
+dependency_overrides:
+  composable_core:
+    path: packages/composable_core

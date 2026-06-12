@@ -1,0 +1,81 @@
+{
+  "app": {
+    "name": "Flutter BLoC Base",
+    "flavor": "development"
+  },
+  "packages": {
+    "offline": {
+      "enabled": false,
+      "retryOnReconnect": true
+    },
+    "cache": {
+      "enabled": false,
+      "engine": "hive"
+    },
+    "auth": {
+      "enabled": true,
+      "mode": "guestAllowed",
+      "refreshBeforeExpiryMinutes": 5
+    },
+    "log": {
+      "enabled": false,
+      "uploadToServer": false,
+      "logApiTraffic": false,
+      "logUserActions": false
+    },
+    "overlay": {
+      "loading": { "enabled": false },
+      "skeleton": { "enabled": false },
+      "toast": { "enabled": false },
+      "noInternet": {
+        "enabled": false,
+        "defaultScope": "none"
+      }
+    },
+    "shell": {
+      "enabled": true,
+      "tabs": ["home", "profile"]
+    },
+    "router": {
+      "deepLink": {
+        "enabled": false,
+        "domain": ""
+      }
+    },
+    "validation": {
+      "enabled": true
+    },
+    "responsive": {
+      "enabled": true
+    },
+    "push": {
+      "enabled": false
+    },
+    "showcase": {
+      "enabled": false,
+      "showOnFirstLaunch": false,
+      "includeArchitectureMap": true
+    },
+    "services": {
+      "googleMaps": { "enabled": false, "apiKeyEnv": "GOOGLE_MAPS_KEY" },
+      "stripe": { "enabled": false }
+    }
+  },
+  "devTools": {
+    "l10nGoogleSheet": {
+      "enabled": false,
+      "sheetId": ""
+    },
+    "ci": { "enabled": false, "fastlane": false },
+    "preCommit": { "enabled": false },
+    "commitlint": { "enabled": false }
+  },
+  "environment": {
+    "flutter": "3.32.8",
+    "dart": ">=3.2.6 <4.0.0",
+    "melos": "^6.0.0",
+    "cocoapods": ">=1.15.0",
+    "java": "17",
+    "xcode": ">=15.0"
+  }
+}

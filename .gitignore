@@ -12,6 +12,12 @@
 # Environment variables
 .env
 
+# FVM
+.fvm/flutter_sdk
+.fvm/release
+.fvm/version
+.fvm/versions
+
 # IntelliJ related
 *.iml
 *.ipr

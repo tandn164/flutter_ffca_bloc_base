@@ -1,6 +1,24 @@
 # flutter bloc base
 
-Flutter Clean Architecture with BLoC
+Flutter Clean Architecture with BLoC — upgrading to **ComposableCore**. See [COMPOSABLE_CORE.md](COMPOSABLE_CORE.md) for the full roadmap.
+
+## Quick Start
+
+```bash
+make help          # list all commands
+make setup         # first time on a new machine
+make bootstrap     # melos: pub get all packages (composable_core, app, …)
+make run           # run the app
+```
+
+Switch API environment: `make env-dev` | `make env-staging` | `make env-prod`
+
+README Quick Start:
+
+Config & feature flags: edit `composable_config.json`, then `make sync`.
+
+Monorepo packages: see [docs/COMPOSABLE_PACKAGES.md](docs/COMPOSABLE_PACKAGES.md).  
+Mỗi package có `README.md` — kiến thức cốt lõi để tự implement tương tự ở codebase khác.
 
 ## 🏗️ Clean Architecture Setup
 

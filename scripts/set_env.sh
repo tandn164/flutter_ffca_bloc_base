@@ -1,6 +1,8 @@
 #!/bin/bash
 
 # Script to switch between environments
+# Prefer: make env-dev | make env-staging | make env-prod
+#
 # Usage: ./scripts/set_env.sh <environment>
 # Environments: development, staging, production
 

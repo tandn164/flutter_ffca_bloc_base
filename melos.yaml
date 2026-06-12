@@ -1,0 +1,30 @@
+name: composable_core_workspace
+repository: https://github.com/composable/composable_core
+
+packages:
+  - .
+  - packages/**
+
+command:
+  bootstrap:
+    runPubGetInParallel: true
+  clean:
+    hooks:
+      post: melos exec --flutter -- "flutter clean"
+
+scripts:
+  analyze:
+    run: melos exec -- dart analyze .
+    description: Analyze all packages
+
+  test:
+    run: melos exec --dir-exists=test -- flutter test
+    description: Run tests in packages that have a test/ folder
+
+  codegen:
+    run: dart run tool/composable_sync.dart && melos exec --depends-on=build_runner -- flutter pub run build_runner build --delete-conflicting-outputs
+    description: Sync composable config + run build_runner where needed
+
+  sync:
+    run: dart run tool/composable_sync.dart
+    description: Validate config and regenerate composable artifacts

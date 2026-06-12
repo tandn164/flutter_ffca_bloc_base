@@ -23,7 +23,7 @@ class AppStateManager {
         break;
       case AuthStatus.guest:
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          navigatorKey.currentState?.pushReplacementNamed(LOGIN_ROUTE);
+          navigatorKey.currentState?.pushReplacementNamed(AUTH_ROUTE);
         });
         break;
       default:

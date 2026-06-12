@@ -8,8 +8,12 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:logging/logging.dart';
 
+import 'package:composable_core/composable_core.dart';
+
 import 'core/config/app_config.dart';
 import 'core/config/environment.dart';
+import 'core/config/composable_runtime_config.dart';
+import 'generated/composable_core/di_registrars.g.dart';
 import 'core/utils/app_assets.dart';
 import 'core/utils/constants.dart';
 import 'core/utils/router.dart' as router;
@@ -27,13 +31,21 @@ Future<void> main() async {
   
   try {
     await Environment.init();
+
+    final composableConfig = await ComposableCoreRuntimeConfig.load();
+    await ComposableCoreBootstrap.initialize(
+      config: composableConfig,
+      moduleDescriptors: ComposableCoreModuleRegistrars.descriptors,
+      registerAppDependencies: (_) => di.init(),
+    );
+
     
     if (Environment.debugMode) {
       debugPrint('=== Environment Configuration ===');
       debugPrint(Environment.environmentInfo);
+      debugPrint('=== ComposableCore Config ===');
+      debugPrint('app: ${composableConfig.appName} (${composableConfig.flavor})');
     }
-
-    await di.init();
     
     await AppAssets.precacheAssets();
     

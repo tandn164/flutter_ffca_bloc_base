@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 import '../utils/color_resource.dart';
-import '../utils/app_assets.dart';
 
 class AppTextField extends StatefulWidget {
   const AppTextField(
@@ -42,27 +40,38 @@ class _AppTextFieldState extends State<AppTextField> {
   TextInputType? get _keyboardType => widget.keyboardType;
   late bool _isSecured;
 
+  // Cache borders to avoid recreating on every build
+  late final InputBorder _transparentBorder;
+  late final InputBorder _redBorder;
+  late final InputBorder _greenBorder;
+
   @override
   void initState() {
     super.initState();
     _isSecured = widget.isSecured;
-  }
-
-  InputBorder _textFieldBorder(Color color) {
-    return OutlineInputBorder(
-      borderSide: BorderSide(
-        color: color,
-      ),
+    
+    // Initialize cached borders
+    _transparentBorder = OutlineInputBorder(
+      borderSide: const BorderSide(color: Colors.transparent),
+      borderRadius: BorderRadius.all(Radius.circular(10.r)),
+    );
+    
+    _redBorder = OutlineInputBorder(
+      borderSide: const BorderSide(color: Colors.red),
+      borderRadius: BorderRadius.all(Radius.circular(10.r)),
+    );
+    
+    _greenBorder = OutlineInputBorder(
+      borderSide: const BorderSide(color: Colors.green),
       borderRadius: BorderRadius.all(Radius.circular(10.r)),
     );
   }
 
-  bool _isError() {
-    return _validationError != null;
-  }
-
   @override
   Widget build(BuildContext context) {
+    // Cache error state to avoid multiple calls
+    final isError = _validationError != null;
+    
     return Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -88,25 +97,17 @@ class _AppTextFieldState extends State<AppTextField> {
                     color: ColorResource.colorF1F1F1),
                 contentPadding: EdgeInsets.only(
                     left: 10.w, right: 10.w, top: 0, bottom: 0),
-                focusedBorder: _textFieldBorder(
-                    _isError() ? Colors.red : Colors.green),
-                enabledBorder: _textFieldBorder(
-                    _isError() ? Colors.red : Colors.transparent),
+                focusedBorder: isError ? _redBorder : _greenBorder,
+                enabledBorder: isError ? _redBorder : _transparentBorder,
                 fillColor: Colors.black,
                 filled: true,
                 suffixIcon: widget.isSecured
                     ? IconButton(
-                        icon: _isSecured
-                            ? SvgPicture.asset(
-                                AppAssets.icEye,
-                                width: 20.w,
-                                height: 20.w,
-                              )
-                            : SvgPicture.asset(
-                                AppAssets.icEyeSlash,
-                                width: 20.w,
-                                height: 20.w,
-                              ),
+                        icon: Icon(
+                          _isSecured ? Icons.visibility_off : Icons.visibility,
+                          color: ColorResource.colorF1F1F1,
+                          size: 20.w,
+                        ),
                         onPressed: () {
                           setState(() {
                             _isSecured = !_isSecured;
@@ -118,7 +119,7 @@ class _AppTextFieldState extends State<AppTextField> {
               cursorColor: Colors.black,
             ),
           ),
-          _isError()
+          isError
               ? Padding(
                   padding: EdgeInsets.only(top: 8.h),
                   child: Text(
@@ -130,7 +131,7 @@ class _AppTextFieldState extends State<AppTextField> {
                         fontWeight: FontWeight.w400),
                   ),
                 )
-              : Container()
+              : const SizedBox.shrink() // Use SizedBox.shrink() instead of Container()
         ]);
   }
 }
