@@ -29,6 +29,31 @@ abstract class UseCase<Type, Params> {
   Future<Either<Failure, Type>> call(Params params);
 }
 
+/// Base interface for stream-based use cases
+/// 
+/// Stream use cases are used for reactive operations that emit
+/// multiple values over time, such as watching data changes.
+/// 
+/// Type Parameters:
+/// - [Type]: The stream element type
+/// - [Params]: The input parameters required by the use case
+/// 
+/// Example:
+/// ```dart
+/// class WatchUserUseCase implements StreamUseCase<User, NoParams> {
+///   @override
+///   Stream<User> call(NoParams params) {
+///     return repository.watchUser();
+///   }
+/// }
+/// ```
+abstract class StreamUseCase<Type, Params> {
+  /// Execute the stream use case with given parameters
+  /// 
+  /// Returns a [Stream<Type>] that emits values over time
+  Stream<Type> call(Params params);
+}
+
 /// Standard parameter class to use when a UseCase doesn't need any parameters
 /// 
 /// This provides a consistent way to handle parameterless use cases

@@ -1,0 +1,6 @@
+# melos_managed_dependency_overrides: composable_core,composable_network
+dependency_overrides:
+  composable_core:
+    path: ../composable_core
+  composable_network:
+    path: ../composable_network

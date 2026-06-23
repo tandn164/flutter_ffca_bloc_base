@@ -13,8 +13,8 @@ abstract final class ComposableCoreBootstrap {
   }) async {
     final sl = serviceLocator ?? GetIt.instance;
 
-    for (final descriptor in moduleDescriptors) {
-      await descriptor.apply(sl);
+    if (!sl.isRegistered<ComposableCoreConfig>()) {
+      sl.registerSingleton<ComposableCoreConfig>(config);
     }
 
     for (final module in modules) {
@@ -23,11 +23,23 @@ abstract final class ComposableCoreBootstrap {
       }
     }
 
+    for (final descriptor in moduleDescriptors) {
+      if (descriptor.enabled) {
+        await descriptor.register(sl);
+      }
+    }
+
     await registerAppDependencies(sl);
 
     for (final module in modules) {
       if (module.isEnabled) {
         await module.bootstrap(sl);
+      }
+    }
+
+    for (final descriptor in moduleDescriptors) {
+      if (descriptor.enabled) {
+        await descriptor.bootstrap?.call(sl);
       }
     }
 

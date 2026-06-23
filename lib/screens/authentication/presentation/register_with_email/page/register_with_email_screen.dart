@@ -62,7 +62,7 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
           } else if (state.status.isRegisterSuccess) {
             hideLoading();
             _authBloc.add(CheckAuthenticateEvent());
-            Navigator.of(context).pushNamed(MAIN_ROUTE);
+            // Remove manual navigation - let authentication state listener handle it
           } else if (state.status.isRegisterFail) {
             hideLoading();
           }

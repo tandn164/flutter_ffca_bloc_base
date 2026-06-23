@@ -10,7 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/base/base_response.dart';
 import '../core/config/environment.dart';
-import '../core/network/rest_client_service.dart';
+import 'package:composable_network/composable_network.dart';
 import '../core/utils/constants.dart';
 
 class AppAuthenticator implements Authenticator {

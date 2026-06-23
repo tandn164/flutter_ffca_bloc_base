@@ -14,10 +14,10 @@ class TokenUseCase implements UseCase<String, NoParams> {
   Future<Either<Failure, String>> call(NoParams params) async {
     final response = await repository.fetchLastSession();
     return response.fold((l) => left(l), (r) {
-      if (r.accessToken == null) {
+      if (r?.accessToken == null) {
         return left(CacheFailure(l10n.cacheFailure));
       } else {
-        return right(r.accessToken!);
+        return right(r!.accessToken!);
       }
     });
   }

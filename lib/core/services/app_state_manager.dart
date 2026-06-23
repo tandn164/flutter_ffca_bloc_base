@@ -15,21 +15,37 @@ class AppStateManager {
   }
 
   static void handleAuthenticationStateChange(BuildContext context, AuthenticationState state) {
+    debugPrint('Authentication state changed to: ${state.authStatus}');
+    
     switch (state.authStatus) {
       case AuthStatus.user:
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          navigatorKey.currentState?.pushReplacementNamed(MAIN_ROUTE);
+          final navigator = navigatorKey.currentState;
+          if (navigator != null) {
+            debugPrint('Navigating to MAIN_ROUTE');
+            navigator.pushReplacementNamed(MAIN_ROUTE);
+          } else {
+            debugPrint('Navigator is null, cannot navigate to MAIN_ROUTE');
+          }
         });
         break;
       case AuthStatus.guest:
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          navigatorKey.currentState?.pushReplacementNamed(AUTH_ROUTE);
+          final navigator = navigatorKey.currentState;
+          if (navigator != null) {
+            debugPrint('Navigating to AUTH_ROUTE');
+            navigator.pushReplacementNamed(AUTH_ROUTE);
+          } else {
+            debugPrint('Navigator is null, cannot navigate to AUTH_ROUTE');
+          }
         });
         break;
       default:
+        debugPrint('Unknown auth status: ${state.authStatus}');
         break;
     }
   }
+
 
   static void handleTokenExpiration(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {

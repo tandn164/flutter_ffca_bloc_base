@@ -19,3 +19,17 @@ class TokenExpiredEvent extends AuthenticationEvent {
   @override
   List<Object?> get props => [];
 }
+
+class AttachDeviceEvent extends AuthenticationEvent {
+  final String userId;
+
+  const AttachDeviceEvent({required this.userId});
+
+  @override
+  List<Object?> get props => [userId];
+}
+
+class DetachDeviceEvent extends AuthenticationEvent {
+  @override
+  List<Object?> get props => [];
+}

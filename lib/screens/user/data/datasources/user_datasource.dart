@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'dart:math';
-import '../../../../core/network/rest_client_service.dart';
+import 'package:composable_network/composable_network.dart';
 import '../../../../core/utils/constants.dart';
 import '../models/user_dto.dart';
 import 'package:shared_preferences/shared_preferences.dart';

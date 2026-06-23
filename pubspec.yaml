@@ -32,6 +32,14 @@ dependencies:
 # COMPOSABLE_PACKAGES_START
   composable_core:
     path: packages/composable_core
+  composable_network:
+    path: packages/composable_network
+  composable_auth:
+    path: packages/composable_auth
+  composable_ui_kit:
+    path: packages/composable_ui_kit
+  composable_cache:
+    path: packages/composable_cache
 # COMPOSABLE_PACKAGES_END
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.5
@@ -70,6 +78,10 @@ dependencies:
   flutter_svg: ^2.0.9
   # device info
   device_info_plus: ^11.5.0
+  # Firebase messaging
+  firebase_messaging: ^15.1.5
+  # UUID generator
+  uuid: ^4.5.1
 
   flutter_localizations:
     sdk: flutter
