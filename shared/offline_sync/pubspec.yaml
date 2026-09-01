@@ -1,0 +1,20 @@
+name: offline_sync
+description: Durable idempotent write outbox and reconnect synchronization for ApiClient.
+version: 1.0.0
+publish_to: "none"
+
+environment:
+  sdk: ^3.6.0
+resolution: workspace
+
+dependencies:
+  api_client:
+    path: ../api_client
+  app_connectivity:
+    path: ../connectivity
+  local_storage:
+    path: ../local_storage/core
+
+dev_dependencies:
+  lints: ^6.0.0
+  test: ^1.25.0

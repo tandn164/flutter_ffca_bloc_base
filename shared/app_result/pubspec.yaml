@@ -1,0 +1,12 @@
+name: app_result
+description: Shared Result/Failure. Pure Dart. No Flutter, HTTP, or feature types.
+version: 1.0.0
+publish_to: "none"
+
+environment:
+  sdk: ^3.6.0
+resolution: workspace
+
+dev_dependencies:
+  lints: ^6.0.0
+  test: ^1.25.0

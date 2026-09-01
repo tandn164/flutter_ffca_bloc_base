@@ -1,0 +1,23 @@
+name: interceptor
+description: Reusable ApiClient interceptors (auth, and future cross-cutting hooks).
+version: 1.0.0
+publish_to: "none"
+
+environment:
+  sdk: ^3.6.0
+resolution: workspace
+
+dependencies:
+  api_client:
+    path: ../api_client
+  app_result:
+    path: ../app_result
+  app_session:
+    path: ../session
+
+dev_dependencies:
+  flutter:
+    sdk: flutter
+  flutter_test:
+    sdk: flutter
+  lints: ^6.0.0

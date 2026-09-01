@@ -1,0 +1,31 @@
+{
+  "dart.flutterSdkPath": ".fvm/flutter_sdk",
+  "dart.projectRoots": [
+    "apps/sample_app",
+    "features/auth/auth_data",
+    "features/auth/auth_domain",
+    "features/auth/auth_presentation",
+    "features/feed/feed_data",
+    "features/feed/feed_domain",
+    "features/feed/feed_presentation",
+    "features/profile/profile_data",
+    "features/profile/profile_domain",
+    "features/profile/profile_presentation",
+    "shared/api_client",
+    "shared/app_result",
+    "shared/interceptor",
+    "shared/logging",
+    "shared/push",
+    "shared/session",
+    "shared/ui_kit"
+  ],
+  "search.exclude": {
+    "**/.fvm": true
+  },
+  "files.watcherExclude": {
+    "**/.fvm/**": true
+  },
+  "dart.analysisExcludedFolders": [
+    ".fvm"
+  ]
+}

@@ -1,0 +1,16 @@
+name: app_logging
+description: LogSink / LogReader and an in-memory buffered implementation. No GetIt.
+version: 1.0.0
+publish_to: "none"
+
+environment:
+  sdk: ^3.6.0
+resolution: workspace
+
+dependencies:
+  api_client:
+    path: ../api_client
+
+dev_dependencies:
+  lints: ^6.0.0
+  test: ^1.25.0

@@ -1,0 +1,29 @@
+name: auth_data
+description: Auth credentials data — AuthApi, repository, token vault, session impl.
+version: 1.0.0
+publish_to: "none"
+
+environment:
+  sdk: ^3.6.0
+  flutter: ">=3.16.0"
+resolution: workspace
+
+dependencies:
+  flutter:
+    sdk: flutter
+  chopper: ^8.1.0
+  api_client:
+    path: ../../../shared/api_client
+  app_result:
+    path: ../../../shared/app_result
+  app_session:
+    path: ../../../shared/session
+  auth_domain:
+    path: ../auth_domain
+
+dev_dependencies:
+  flutter_lints: ^6.0.0
+  flutter_test:
+    sdk: flutter
+  build_runner: ^2.4.13
+  chopper_generator: ^8.1.0

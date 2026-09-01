@@ -1,0 +1,2 @@
+app_identifier("com.company.flutterFfcaBase")
+# apple_id / itc_team_id / team_id — set in CI, not in the app

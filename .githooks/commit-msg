@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+message_file="$1"
+subject="$(head -n 1 "$message_file")"
+pattern='^(feat|fix|docs|refactor|test|build|ci|chore|perf|style|revert)(\([a-z0-9._/-]+\))?!?: .{1,72}$'
+
+if [[ ! "$subject" =~ $pattern ]]; then
+  echo "Invalid commit subject." >&2
+  echo "Use Conventional Commits, for example:" >&2
+  echo "  feat(offline): persist retryable writes" >&2
+  exit 1
+fi

@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: .
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read version contract
+        id: pin
+        run: |
+          set -a
+          # shellcheck disable=SC1091
+          source tool/toolchain.env
+          set +a
+          echo "flutter=${FLUTTER_VERSION}" >> "$GITHUB_OUTPUT"
+          echo "java=${JAVA_MAJOR}" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ steps.pin.outputs.java }}
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ steps.pin.outputs.flutter }}
+          channel: stable
+          cache: true
+
+      - run: dart pub get
+      - name: Generate code
+        run: USE_SYSTEM_SDK=1 APP=sample_app bash tool/codegen_all.sh
+      - name: Analyze workspace
+        run: USE_SYSTEM_SDK=1 APP=sample_app bash tool/analyze_all.sh
+      - name: Test workspace
+        run: USE_SYSTEM_SDK=1 APP=sample_app bash tool/test_all.sh

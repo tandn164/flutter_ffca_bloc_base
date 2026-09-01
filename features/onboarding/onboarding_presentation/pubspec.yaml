@@ -1,0 +1,20 @@
+name: onboarding_presentation
+description: Configurable Flutter onboarding page with app-owned content.
+version: 1.0.0
+publish_to: "none"
+
+environment:
+  sdk: ^3.6.0
+  flutter: ">=3.16.0"
+resolution: workspace
+
+dependencies:
+  flutter:
+    sdk: flutter
+  onboarding_domain:
+    path: ../onboarding_domain
+
+dev_dependencies:
+  flutter_lints: ^6.0.0
+  flutter_test:
+    sdk: flutter

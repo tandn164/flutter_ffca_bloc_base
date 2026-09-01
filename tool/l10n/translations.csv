@@ -1,0 +1,9 @@
+key,en,ja
+home,Home,ホーム
+profile,Profile,プロフィール
+authLogin,Login,ログイン
+authForgotPassword,Forgot password,パスワードを忘れた
+userEmail,Email,メール
+userPassword,Password,パスワード
+validationRequired,This field is required,必須項目です
+validationEmail,Enter a valid email,有効なメールアドレスを入力してください

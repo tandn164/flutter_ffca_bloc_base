@@ -1,0 +1,17 @@
+# Fastlane templates — fill signing / store keys in CI secrets, never in Dart.
+# Usage: cd android && bundle exec fastlane build
+
+default_platform(:android)
+
+platform :android do
+  desc "Assemble the prod flavor release APK"
+  lane :build do
+    gradle(task: "assembleProdRelease")
+  end
+
+  desc "Assemble a flavor (FLAVOR=dev|stg|prod)"
+  lane :assemble do |options|
+    flavor = (options[:flavor] || ENV["FLAVOR"] || "prod").capitalize
+    gradle(task: "assemble#{flavor}Release")
+  end
+end

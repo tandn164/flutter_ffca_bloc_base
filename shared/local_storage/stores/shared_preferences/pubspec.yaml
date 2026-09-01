@@ -1,0 +1,21 @@
+name: local_storage_shared_preferences
+description: Flutter SharedPreferences adapter for the local_storage contract.
+version: 1.0.0
+publish_to: "none"
+
+environment:
+  sdk: ^3.6.0
+  flutter: ">=3.16.0"
+resolution: workspace
+
+dependencies:
+  flutter:
+    sdk: flutter
+  local_storage:
+    path: ../../core
+  shared_preferences: ^2.2.0
+
+dev_dependencies:
+  flutter_lints: ^6.0.0
+  flutter_test:
+    sdk: flutter

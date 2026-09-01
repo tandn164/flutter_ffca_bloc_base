@@ -1,0 +1,12 @@
+name: local_storage
+description: Pure Dart async key-value storage contract and in-memory store.
+version: 1.0.0
+publish_to: "none"
+
+environment:
+  sdk: ^3.6.0
+resolution: workspace
+
+dev_dependencies:
+  lints: ^6.0.0
+  test: ^1.25.0

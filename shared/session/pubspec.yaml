@@ -1,0 +1,20 @@
+name: app_session
+description: Signed-in state and GoRouter Listenable. No auth HTTP, no GetIt.
+version: 1.0.0
+publish_to: "none"
+
+environment:
+  sdk: ^3.6.0
+  flutter: ">=3.16.0"
+resolution: workspace
+
+dependencies:
+  flutter:
+    sdk: flutter
+  app_result:
+    path: ../app_result
+
+dev_dependencies:
+  flutter_lints: ^6.0.0
+  flutter_test:
+    sdk: flutter

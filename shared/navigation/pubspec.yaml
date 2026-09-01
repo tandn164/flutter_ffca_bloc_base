@@ -1,0 +1,22 @@
+name: app_navigation
+description: Configurable session route policy, deep-link parsing, and Flutter navigation logging.
+version: 1.0.0
+publish_to: "none"
+
+environment:
+  sdk: ^3.6.0
+  flutter: ">=3.16.0"
+resolution: workspace
+
+dependencies:
+  flutter:
+    sdk: flutter
+  app_logging:
+    path: ../logging
+  app_session:
+    path: ../session
+
+dev_dependencies:
+  flutter_lints: ^6.0.0
+  flutter_test:
+    sdk: flutter

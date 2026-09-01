@@ -1,0 +1,38 @@
+# Fastlane templates — fill signing / store keys in CI secrets, never in Dart.
+# Usage: cd ios && bundle exec fastlane beta
+
+default_platform(:ios)
+
+platform :ios do
+  desc "Build the prod scheme (signing via CI Match / API key)"
+  lane :beta do
+    changelog = File.exist?("CHANGELOG.md") ? File.read("CHANGELOG.md") : ""
+    UI.message(changelog) unless changelog.empty?
+    build_app(scheme: "prod", export_method: "app-store")
+  end
+
+  desc "Build and optionally upload the selected release destination"
+  lane :release do
+    flavor = ENV.fetch("FLAVOR", "prod")
+    destination = ENV.fetch("RELEASE_DESTINATION", "local")
+    signing = ENV.fetch("SIGNING", "automatic")
+    match(type: "appstore", readonly: true) if signing == "match"
+    build_app(
+      scheme: flavor,
+      export_method: "app-store",
+      xcargs: "MARKETING_VERSION=#{ENV['BUILD_NAME']} CURRENT_PROJECT_VERSION=#{ENV['BUILD_NUMBER']}"
+    )
+    case destination
+    when "testflight-internal"
+      upload_to_testflight(distribute_external: false, skip_waiting_for_build_processing: true)
+    when "testflight-external"
+      upload_to_testflight(
+        distribute_external: true,
+        groups: ENV.fetch("TESTFLIGHT_GROUPS", "").split(","),
+        changelog: ENV.fetch("CHANGELOG", "")
+      )
+    when "app-store"
+      upload_to_app_store(submit_for_review: false, automatic_release: false)
+    end
+  end
+end

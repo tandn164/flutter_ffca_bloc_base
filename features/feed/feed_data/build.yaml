@@ -1,0 +1,6 @@
+targets:
+  $default:
+    builders:
+      chopper_generator:
+        generate_for:
+          - lib/src/api/*.dart

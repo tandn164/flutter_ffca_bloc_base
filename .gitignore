@@ -11,18 +11,27 @@
 
 # Environment variables
 .env
+.env.local
+**/.env
+!**/.env.example
+!**/.env.development
+!**/.env.staging
+!**/.env.production
 
-# FVM
-.fvm/flutter_sdk
-.fvm/release
-.fvm/version
-.fvm/versions
+# Bundler (project-local gems)
+/vendor/bundle/
+.bundle/
 
 # IntelliJ related
 *.iml
 *.ipr
 *.iws
 .idea/
+
+# Draw.io autosave leftovers
+*.drawio.bkp
+*.drawio.dtmp
+.$*.drawio.*
 
 # The .vscode folder contains launch configuration and tasks you configure in
 # VS Code which you may wish to be included in version control, so this line
@@ -33,15 +42,17 @@
 **/doc/api/
 **/ios/Flutter/.last_build_id
 .dart_tool/
+.fvm/flutter_sdk
 .flutter-plugins
 .flutter-plugins-dependencies
 .packages
 .pub-cache/
 .pub/
 /build/
+**/build/
 
 # Web related
-lib/generated_plugin_registrant.dart
+**/lib/generated_plugin_registrant.dart
 
 # Symbolication related
 app.*.symbols
@@ -50,6 +61,11 @@ app.*.symbols
 app.*.map.json
 
 # Android Studio will place build artifacts here
-/android/app/debug
-/android/app/profile
-/android/app/release
+**/android/app/debug
+**/android/app/profile
+**/android/app/release
+
+# Pub workspace: member lockfiles are deleted after root pub get
+# Keep overrides local-only if ever needed
+pubspec_overrides.yaml
+**/pubspec_overrides.yaml

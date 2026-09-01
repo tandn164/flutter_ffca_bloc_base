@@ -1,0 +1,2 @@
+json_key_file("") # Play service account JSON — CI secret, not committed
+package_name("com.company.flutter_ffca_base")
