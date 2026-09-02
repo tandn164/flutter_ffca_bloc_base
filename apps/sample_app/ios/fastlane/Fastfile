@@ -1,38 +1,70 @@
-# Fastlane templates — fill signing / store keys in CI secrets, never in Dart.
-# Usage: cd ios && bundle exec fastlane beta
-
 default_platform(:ios)
 
 platform :ios do
-  desc "Build the prod scheme (signing via CI Match / API key)"
-  lane :beta do
-    changelog = File.exist?("CHANGELOG.md") ? File.read("CHANGELOG.md") : ""
-    UI.message(changelog) unless changelog.empty?
-    build_app(scheme: "prod", export_method: "app-store")
-  end
-
-  desc "Build and optionally upload the selected release destination"
+  desc "Export an IPA or upload it to Firebase, TestFlight, or App Store Connect"
   lane :release do
-    flavor = ENV.fetch("FLAVOR", "prod")
-    destination = ENV.fetch("RELEASE_DESTINATION", "local")
+    flavor = ENV.fetch("FLAVOR")
+    destination = ENV.fetch("DESTINATION")
     signing = ENV.fetch("SIGNING", "automatic")
-    match(type: "appstore", readonly: true) if signing == "match"
-    build_app(
+    # Pinned Fastlane 2.231.1 does not accept release-testing/app-store-connect.
+    # Xcode still supports these legacy aliases; do not rename without upgrading gym.
+    export_method = destination == "firebase" ? "ad-hoc" : "app-store"
+
+    if signing == "match"
+      match(type: export_method == "ad-hoc" ? "adhoc" : "appstore", readonly: true)
+    end
+
+    build_options = {
       scheme: flavor,
-      export_method: "app-store",
-      xcargs: "MARKETING_VERSION=#{ENV['BUILD_NAME']} CURRENT_PROJECT_VERSION=#{ENV['BUILD_NUMBER']}"
-    )
+      export_method: export_method,
+      output_directory: "../build/ios/ipa",
+      output_name: "#{ENV.fetch('APP_NAME')}-#{flavor}-#{ENV.fetch('BUILD_NAME')}+#{ENV.fetch('BUILD_NUMBER')}.ipa",
+      xcargs: "MARKETING_VERSION=#{ENV.fetch('BUILD_NAME')} CURRENT_PROJECT_VERSION=#{ENV.fetch('BUILD_NUMBER')}"
+    }
+    if signing == "automatic"
+      # Allow Xcode to obtain signing assets during BOTH archive and IPA export.
+      # Do not infer the team from another account: default to the Xcode project.
+      build_options[:xcargs] += " CODE_SIGN_STYLE=Automatic -allowProvisioningUpdates"
+      build_options[:export_xcargs] = "-allowProvisioningUpdates"
+      build_options[:export_options] = { signingStyle: "automatic" }
+      # A detected profile map would force gym to change signingStyle to manual.
+      build_options[:skip_profile_detection] = true
+      team_id = ENV.fetch("IOS_TEAM_ID", "").strip
+      unless team_id.empty?
+        UI.user_error!("IOS_TEAM_ID must be a 10-character Apple team ID") unless team_id.match?(/\A[A-Z0-9]{10}\z/)
+        build_options[:xcargs] += " DEVELOPMENT_TEAM=#{team_id}"
+        build_options[:export_team_id] = team_id
+      end
+    end
+    build_app(**build_options)
+    ipa_path = lane_context[SharedValues::IPA_OUTPUT_PATH]
+    UI.user_error!("IPA was not produced") if ipa_path.to_s.empty? || !File.exist?(ipa_path)
+
     case destination
+    when "export-ipa"
+      UI.success("Exported IPA: #{ipa_path}")
+    when "firebase"
+      options = {
+        app: ENV.fetch("FIREBASE_APP_ID"),
+        ipa_path: ipa_path,
+        release_notes: ENV.fetch("RELEASE_NOTES", "")
+      }
+      options[:groups] = ENV["FIREBASE_GROUPS"] unless ENV.fetch("FIREBASE_GROUPS", "").empty?
+      options[:service_credentials_file] = ENV["FIREBASE_SERVICE_CREDENTIALS_FILE"] unless ENV.fetch("FIREBASE_SERVICE_CREDENTIALS_FILE", "").empty?
+      release = firebase_app_distribution(**options)
+      UI.success("Firebase release: #{release[:firebaseConsoleUri]}") if release&.dig(:firebaseConsoleUri)
     when "testflight-internal"
       upload_to_testflight(distribute_external: false, skip_waiting_for_build_processing: true)
     when "testflight-external"
       upload_to_testflight(
         distribute_external: true,
-        groups: ENV.fetch("TESTFLIGHT_GROUPS", "").split(","),
+        groups: ENV.fetch("TESTFLIGHT_GROUPS", "").split(",").reject(&:empty?),
         changelog: ENV.fetch("CHANGELOG", "")
       )
     when "app-store"
       upload_to_app_store(submit_for_review: false, automatic_release: false)
+    else
+      UI.user_error!("Unsupported destination: #{destination}")
     end
   end
 end

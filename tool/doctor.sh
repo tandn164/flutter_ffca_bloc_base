@@ -7,6 +7,10 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 # shellcheck disable=SC1091
 source "$ROOT/tool/toolchain.env"
+# shellcheck disable=SC1091
+source "$ROOT/tool/bootstrap/ruby_env.sh"
+
+activate_project_ruby || true
 
 FAILED=0
 OS="$(uname -s)"
@@ -147,6 +151,13 @@ else
     "Do not change those plugin versions to latest."
 fi
 
+if grep -q "com.google.gms.google-services\".*version \"${GOOGLE_SERVICES_PLUGIN_VERSION}\"" "$settings"; then
+  pass_check "Google Services Gradle plugin ${GOOGLE_SERVICES_PLUGIN_VERSION}"
+else
+  fail_check "Google Services Gradle plugin" "$GOOGLE_SERVICES_PLUGIN_VERSION in ${APP_REL}/android/settings.gradle.kts" \
+    "missing or mismatched" "Restore the pinned optional Firebase wiring."
+fi
+
 app_gradle="$APP/android/app/build.gradle.kts"
 if grep -q "compileSdk = ${ANDROID_COMPILE_SDK}" "$app_gradle" \
   && grep -q "minSdk = ${ANDROID_MIN_SDK}" "$app_gradle" \
@@ -180,6 +191,31 @@ else
   fail_check "Environment template" "${APP_REL}/.env.example" "missing" "Restore .env.example from git."
 fi
 
+# --- project Ruby / release tooling ---
+if command -v rbenv >/dev/null 2>&1; then
+  ruby_ver="$(ruby -e 'print RUBY_VERSION' 2>/dev/null || true)"
+  ruby_bin="$(command -v ruby || true)"
+  if [[ "$ruby_ver" == "$RUBY_VERSION" && "$ruby_bin" == *rbenv*/shims/ruby ]]; then
+    pass_check "Ruby ${ruby_ver} selected by .ruby-version"
+  else
+    fail_check "Ruby" "${RUBY_VERSION} through rbenv" "${ruby_ver:-missing} (${ruby_bin:-not found})" \
+      "Run: make init"
+  fi
+else
+  fail_check "rbenv" "rbenv with Ruby ${RUBY_VERSION}" "missing" "Run: make init"
+fi
+
+if command -v bundle >/dev/null 2>&1; then
+  bundler_ver="$(project_bundle --version 2>/dev/null | awk '{print $3}' || true)"
+  if [[ "$bundler_ver" == "$BUNDLER_VERSION" ]]; then
+    pass_check "Bundler ${bundler_ver}"
+  else
+    fail_check "Bundler" "$BUNDLER_VERSION" "${bundler_ver:-unknown}" "Run: make init"
+  fi
+else
+  fail_check "Bundler" "$BUNDLER_VERSION under Ruby $RUBY_VERSION" "missing" "Run: make init"
+fi
+
 # --- macOS / iOS ---
 if [[ "$OS" == "Darwin" ]]; then
   if command -v xcodebuild >/dev/null 2>&1; then
@@ -195,22 +231,6 @@ if [[ "$OS" == "Darwin" ]]; then
       "Install Xcode from the App Store and Xcode Command Line Tools."
   fi
 
-  if command -v ruby >/dev/null 2>&1; then
-    ruby_ver="$(ruby -e 'print RUBY_VERSION' 2>/dev/null || true)"
-    ruby_bin="$(command -v ruby)"
-    if [[ "$ruby_bin" == /usr/bin/ruby || "$ruby_bin" == /System/* ]]; then
-      pass_check "Ruby ${ruby_ver} (macOS system) — Gemfile pins concurrent-ruby 1.3.4 so CocoaPods can run"
-    else
-      pass_check "Ruby ${ruby_ver} (${ruby_bin})"
-    fi
-  fi
-
-  if command -v bundle >/dev/null 2>&1; then
-    pass_check "Bundler $(bundle --version 2>/dev/null | awk '{print $3}')"
-  else
-    fail_check "Bundler" "bundle on PATH" "missing" \
-      "Install Bundler: gem install bundler  (then make init uses Gemfile, not global CocoaPods)"
-  fi
 else
   pass_check "iOS/Xcode skipped (${OS})"
 fi

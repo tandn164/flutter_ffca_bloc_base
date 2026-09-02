@@ -20,7 +20,7 @@ APP="apps/${APP_NAME}"
 analyze() {
   local dir="$1"
   echo "==> analyze $dir"
-  (cd "$dir" && "${DART_CMD[@]}" analyze)
+  (cd "$dir" && "${DART_CMD[@]}" analyze </dev/null)
 }
 
 analyze "$APP"

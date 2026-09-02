@@ -1,0 +1,26 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '__name___bloc.dart';
+
+class __Pascal__Page extends StatelessWidget {
+  const __Pascal__Page({super.key, required this.createBloc, this.title = '__Pascal__'});
+  final __Pascal__Bloc Function() createBloc;
+  final String title;
+
+  @override
+  Widget build(BuildContext context) => BlocProvider(
+    create: (_) => createBloc()..add(const __Pascal__Started()),
+    child: Scaffold(
+      appBar: AppBar(title: Text(title)),
+      body: BlocBuilder<__Pascal__Bloc, __Pascal__State>(
+        builder: (context, state) => switch (state) {
+          __Pascal__Loading() => const Center(child: CircularProgressIndicator()),
+          __Pascal__Error(:final message) => Center(child: Text(message)),
+          __Pascal__Data(:final items) => items.isEmpty
+            ? const Center(child: Text('No items'))
+            : ListView(children: [for (final item in items) ListTile(title: Text(item.title))]),
+        },
+      ),
+    ),
+  );
+}

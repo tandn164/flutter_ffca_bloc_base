@@ -3,7 +3,7 @@ import 'package:test/test.dart';
 
 void main() {
   test('notifies only when the connectivity hint changes', () {
-    final connectivity = FakeConnectivity();
+    final connectivity = MutableConnectivityHint();
     var notifications = 0;
     connectivity.addListener(() => notifications++);
 

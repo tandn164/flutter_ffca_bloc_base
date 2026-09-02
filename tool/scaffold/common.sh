@@ -31,7 +31,23 @@ ensure_workspace_line() {
   if grep -Fq "$line" "$file"; then
     return 0
   fi
-  printf '\n%s\n' "$line" >>"$file"
+  python3 - "$file" "$line" <<'PY'
+from pathlib import Path
+import re
+import sys
+
+path = Path(sys.argv[1])
+lines = path.read_text().splitlines()
+try:
+    start = lines.index('workspace:') + 1
+except ValueError:
+    raise SystemExit(f'workspace: block not found in {path}')
+end = start
+while end < len(lines) and not re.match(r'^[A-Za-z_][A-Za-z0-9_-]*:', lines[end]):
+    end += 1
+lines.insert(end, sys.argv[2])
+path.write_text('\n'.join(lines) + '\n')
+PY
 }
 
 remove_workspace_line() {

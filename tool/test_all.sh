@@ -21,8 +21,8 @@ while IFS= read -r package; do
   has_tests "$package" || continue
   echo "==> test $package"
   if is_flutter_package "$package"; then
-    (cd "$package" && "${FLUTTER_CMD[@]}" test)
+    (cd "$package" && "${FLUTTER_CMD[@]}" test </dev/null)
   else
-    (cd "$package" && "${DART_CMD[@]}" test)
+    (cd "$package" && "${DART_CMD[@]}" test </dev/null)
   fi
 done < <(workspace_library_packages)

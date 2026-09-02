@@ -305,6 +305,7 @@ DART
   else
     python3 - <<'PY' "$MANIFEST" "$NAME" "$PASCAL" "$ROUTE_KIND"
 import pathlib
+import re
 import sys
 
 path = pathlib.Path(sys.argv[1])
@@ -313,7 +314,7 @@ text = path.read_text()
 
 import_line = f"import '{name}_feature.dart';"
 if import_line not in text:
-    anchor = "import 'profile_feature.dart';"
+    anchor = "import 'sample_feature.dart';"
     if anchor in text:
         text = text.replace(anchor, anchor + "\n" + import_line, 1)
     else:
@@ -324,25 +325,27 @@ if import_line not in text:
 register = f"  register{pascal}Dependencies(sl);"
 if register not in text:
     text = text.replace(
-        "  registerOnboardingDependencies(sl);\n",
-        "  registerOnboardingDependencies(sl);\n" + register + "\n",
+        "  registerSampleDependencies(sl);\n",
+        "  registerSampleDependencies(sl);\n" + register + "\n",
         1,
     )
 
 if route_kind == "tab":
     branch = f"    create{pascal}Branch(sl),"
     if branch not in text:
-        text = text.replace(
-            "    createProfileBranch(sl),\n",
-            "    createProfileBranch(sl),\n" + branch + "\n",
-            1,
-        )
+        pattern = r'(List<StatefulShellBranch>\s+create\w+ShellBranches\(GetIt sl\)\s*\{\s*return\s*\[)(.*?)(\];)'
+        def append_branch(match):
+            existing = match[2].rstrip().rstrip(',')
+            return match[1] + existing + ',\n' + branch + '\n' + match[3]
+        text, count = re.subn(pattern, append_branch, text, count=1, flags=re.S)
+        if count != 1:
+            raise SystemExit('Unable to locate shell branch manifest; wire the new feature explicitly.')
 else:
     routes = f"    ...create{pascal}Routes(sl),"
     if routes not in text:
         text = text.replace(
-            "  return [...createAuthRoutes(sl), ...createOnboardingRoutes(sl)];",
-            "  return [...createAuthRoutes(sl), ...createOnboardingRoutes(sl),\n" + routes + "];",
+            "    ...createShowcaseRoutes(),\n",
+            "    ...createShowcaseRoutes(),\n" + routes + "\n",
             1,
         )
 
@@ -375,8 +378,14 @@ PY
   fi
 fi
 
+info "apply generated model, BLoC, DI, and route conventions"
+python3 "$ROOT/tool/scaffold/generated_feature.py" "$ROOT" "$NAME" "$APP" "$WIRE"
+
 info "dart pub get"
 (cd "$ROOT" && fvm dart pub get >/dev/null)
+
+info "generate sources"
+(cd "$ROOT" && APP="$APP" bash tool/codegen_all.sh)
 
 cat <<EOF
 

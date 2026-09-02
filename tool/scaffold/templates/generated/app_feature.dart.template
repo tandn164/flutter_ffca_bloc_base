@@ -1,0 +1,26 @@
+import 'package:flutter/widgets.dart';
+import 'package:get_it/get_it.dart';
+import 'package:go_router/go_router.dart';
+import 'package:__name___presentation/__name___presentation.dart';
+import '../di.dart' as app_di;
+import '__name__/__name___di.dart';
+
+part '__name___feature.g.dart';
+
+void register__Pascal__Dependencies(GetIt sl) => configure__Pascal__Dependencies(sl);
+
+@TypedGoRoute<__Pascal__Route>(path: '/__name__')
+class __Pascal__Route extends GoRouteData {
+  const __Pascal__Route();
+  @override
+  Widget build(BuildContext context, GoRouterState state) => _page(app_di.sl);
+}
+
+Widget _page(GetIt sl) => __Pascal__Page(createBloc: () => __Pascal__Bloc(sl()));
+
+// Keep app-selected composition and scoped DI separate from typed URL helpers.
+List<RouteBase> create__Pascal__Routes(GetIt sl) => [
+  GoRoute(path: const __Pascal__Route().location, builder: (_, __) => _page(sl)),
+];
+
+StatefulShellBranch create__Pascal__Branch(GetIt sl) => StatefulShellBranch(routes: create__Pascal__Routes(sl));

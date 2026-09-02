@@ -19,5 +19,6 @@ echo "==> gen-l10n $APP_DIR"
 
 while IFS= read -r package; do
   echo "==> build_runner $package"
-  (cd "$package" && "${DART_CMD[@]}" run build_runner build --delete-conflicting-outputs)
+  # Prevent build_runner from consuming the remaining package-list stdin.
+  (cd "$package" && "${DART_CMD[@]}" run build_runner build --delete-conflicting-outputs </dev/null)
 done < <(codegen_packages)

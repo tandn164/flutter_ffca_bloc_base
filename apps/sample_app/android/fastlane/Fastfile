@@ -1,17 +1,46 @@
-# Fastlane templates — fill signing / store keys in CI secrets, never in Dart.
-# Usage: cd android && bundle exec fastlane build
-
 default_platform(:android)
 
 platform :android do
-  desc "Assemble the prod flavor release APK"
-  lane :build do
-    gradle(task: "assembleProdRelease")
-  end
+  desc "Build an APK/AAB and optionally distribute it through Firebase"
+  lane :release do
+    flavor = ENV.fetch("FLAVOR")
+    artifact = ENV.fetch("ARTIFACT", "apk")
+    destination = ENV.fetch("DESTINATION")
+    build_name = ENV.fetch("BUILD_NAME")
+    build_number = ENV.fetch("BUILD_NUMBER")
 
-  desc "Assemble a flavor (FLAVOR=dev|stg|prod)"
-  lane :assemble do |options|
-    flavor = (options[:flavor] || ENV["FLAVOR"] || "prod").capitalize
-    gradle(task: "assemble#{flavor}Release")
+    UI.user_error!("ARTIFACT must be apk or appbundle") unless %w[apk appbundle].include?(artifact)
+
+    Dir.chdir("..") do
+      sh(
+        "fvm", "flutter", "build", artifact,
+        "--flavor", flavor,
+        "--release",
+        "--build-name", build_name,
+        "--build-number", build_number,
+        "--dart-define=FLAVOR=#{flavor}"
+      )
+    end
+
+    artifact_path = if artifact == "apk"
+      File.expand_path("../../build/app/outputs/flutter-apk/app-#{flavor}-release.apk", __dir__)
+    else
+      File.expand_path("../../build/app/outputs/bundle/#{flavor}Release/app-#{flavor}-release.aab", __dir__)
+    end
+    UI.user_error!("Build artifact not found: #{artifact_path}") unless File.exist?(artifact_path)
+
+    if destination == "firebase"
+      options = {
+        app: ENV.fetch("FIREBASE_APP_ID"),
+        android_artifact_path: artifact_path,
+        release_notes: ENV.fetch("RELEASE_NOTES", "")
+      }
+      options[:groups] = ENV["FIREBASE_GROUPS"] unless ENV.fetch("FIREBASE_GROUPS", "").empty?
+      options[:service_credentials_file] = ENV["FIREBASE_SERVICE_CREDENTIALS_FILE"] unless ENV.fetch("FIREBASE_SERVICE_CREDENTIALS_FILE", "").empty?
+      release = firebase_app_distribution(**options)
+      UI.success("Firebase release: #{release[:firebaseConsoleUri]}") if release&.dig(:firebaseConsoleUri)
+    else
+      UI.success("Exported #{artifact.upcase}: #{artifact_path}")
+    end
   end
 end

@@ -1,4 +1,4 @@
-import 'package:api_client/api_client.dart';
+import 'package:app_connectivity/app_connectivity.dart';
 import 'package:app_overlay/app_overlay.dart';
 import 'package:flutter/material.dart';
 import 'package:sample_app/app/config/app_config.dart';
@@ -6,12 +6,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:tutorial_engine/tutorial_engine.dart';
 
 OverlayController _controller({
-  FakeConnectivity? net,
+  MutableConnectivityHint? net,
   AppConfig config = const AppConfig(),
   TutorialStore? tutorials,
 }) {
   return OverlayController(
-    connectivity: net ?? FakeConnectivity(),
+    connectivity: net ?? MutableConnectivityHint(),
     defaultPageConfig: PageConfig(
       noInternet: config.defaultNoInternet,
     ),
@@ -45,7 +45,7 @@ void main() {
   });
 
   test('PageConfig off does not show banner or block while offline', () {
-    final net = FakeConnectivity()..setOffline(true);
+    final net = MutableConnectivityHint()..setOffline(true);
     final overlay = _controller(net: net);
     overlay.setPageConfig(PageConfig.splash);
     expect(overlay.showBanner, isFalse);
@@ -60,7 +60,7 @@ void main() {
   });
 
   test('visible page wins when another scaffold deactivates', () {
-    final net = FakeConnectivity()..setOffline(true);
+    final net = MutableConnectivityHint()..setOffline(true);
     final overlay = _controller(net: net);
     final splash = Object();
     final home = Object();

@@ -39,6 +39,9 @@ rsync -a \
   --exclude 'ios/Pods' \
   --exclude 'ios/.symlinks' \
   --exclude 'android/.gradle' \
+  --exclude 'google-services.json' \
+  --exclude 'GoogleService-Info.plist' \
+  --exclude '.secrets' \
   --exclude '.env' \
   --exclude 'sample_app.iml' \
   --exclude 'flutter_ffca_base.iml' \
@@ -56,6 +59,16 @@ text = path.read_text()
 text = re.sub(r'^name: .*$', f'name: {name}', text, count=1, flags=re.M)
 path.write_text(text)
 PY
+
+info "prepare per-flavor Firebase configuration folders"
+for flavor in dev stg prod; do
+  mkdir -p "$DST_DIR/android/app/src/$flavor"
+  mkdir -p "$DST_DIR/ios/Runner/Firebase/$flavor"
+  : >"$DST_DIR/android/app/src/$flavor/.gitkeep"
+  : >"$DST_DIR/ios/Runner/Firebase/$flavor/.gitkeep"
+done
+mkdir -p "$DST_DIR/.secrets"
+: >"$DST_DIR/.secrets/.gitkeep"
 
 info "register workspace app"
 ensure_workspace_line "$ROOT/pubspec.yaml" "  - apps/$NAME"

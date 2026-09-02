@@ -10,8 +10,11 @@ abstract class ConnectivityHint {
   void removeListener(void Function() listener);
 }
 
-/// A controllable implementation for demos and tests.
-class FakeConnectivity implements ConnectivityHint {
+/// A mutable connectivity signal for previews, debug menus, and host adapters.
+///
+/// Production apps can update this object from their connectivity plugin while
+/// sample apps can expose the state as an explicit UI control.
+class MutableConnectivityHint implements ConnectivityHint {
   bool _offline = false;
   final List<void Function()> _listeners = [];
 

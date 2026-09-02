@@ -1,0 +1,27 @@
+name: sample_data
+description: Sample data — SampleApi, DTOs, SampleRepositoryImpl.
+version: 1.0.0
+publish_to: "none"
+
+environment:
+  sdk: ^3.6.0
+resolution: workspace
+
+dependencies:
+  freezed_annotation: ^3.1.0
+  json_annotation: ^4.9.0
+  chopper: ^8.1.0
+  api_client:
+    path: ../../../shared/api_client
+  app_result:
+    path: ../../../shared/app_result
+  sample_domain:
+    path: ../sample_domain
+
+dev_dependencies:
+  freezed: 3.0.6
+  json_serializable: 6.9.5
+  lints: ^6.0.0
+  test: ^1.25.0
+  build_runner: ^2.4.13
+  chopper_generator: ^8.1.0

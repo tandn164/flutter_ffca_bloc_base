@@ -28,10 +28,11 @@ apiGateway = DataGateway(connectivity: connectivity, client: apiClient);
 overlay = AppOverlayController(connectivity: connectivity);
 ```
 
-Use `FakeConnectivity` in tests and demo applications:
+Use `MutableConnectivityHint` in tests, previews, or as the state updated by a
+real connectivity plugin adapter:
 
 ```dart
-final connectivity = FakeConnectivity()..setOffline(true);
+final connectivity = MutableConnectivityHint()..setOffline(true);
 ```
 
 ## Important limitation

@@ -1,0 +1,16 @@
+import 'package:get_it/get_it.dart';
+import 'package:injectable/injectable.dart';
+import 'package:__name___domain/__name___domain.dart';
+import 'package:__name___data/__name___data.dart';
+import '__name___di.config.dart';
+
+@InjectableInit(initializerName: 'init__Pascal__Feature', generateForDir: ['lib/app/features/__name__'])
+void configure__Pascal__Dependencies(GetIt container) => container.init__Pascal__Feature();
+
+@module
+abstract class __Pascal__Module {
+  @lazySingleton
+  __Pascal__Repository repository() => const __Pascal__RepositoryImpl();
+  @lazySingleton
+  List__Pascal__Items listItems(__Pascal__Repository repository) => List__Pascal__Items(repository);
+}

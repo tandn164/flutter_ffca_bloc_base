@@ -24,6 +24,8 @@ export APP="$APP_NAME"
 cd "$ROOT"
 # shellcheck disable=SC1091
 source "$ROOT/tool/toolchain.env"
+# shellcheck disable=SC1091
+source "$ROOT/tool/bootstrap/ruby_env.sh"
 
 FLAVOR="${FLAVOR:-dev}"
 OS="$(uname -s)"
@@ -35,6 +37,8 @@ ok() { echo "✓ $*"; }
 
 info "bootstrap prerequisites"
 bash "$ROOT/tool/bootstrap/install_prerequisites.sh"
+activate_project_ruby || fail "Ruby ${RUBY_VERSION} is not installed through rbenv"
+ok "Ruby $(ruby -e 'print RUBY_VERSION') selected by .ruby-version"
 
 info "doctor"
 bash "$ROOT/tool/doctor.sh" --prereq
@@ -79,18 +83,14 @@ info "code generation"
 APP="$APP_NAME" bash "$ROOT/tool/codegen_all.sh"
 ok "Code generation completed"
 
+info "Ruby dependencies"
+project_bundle config set --local path 'vendor/bundle'
+project_bundle install
+ok "Ruby dependencies ready"
+
 if [[ "$OS" == "Darwin" ]]; then
   info "iOS dependencies"
-  command -v bundle >/dev/null 2>&1 || fail "Bundler missing. Install: gem install bundler"
-  if command -v brew >/dev/null 2>&1; then
-    brew_ruby="$(brew --prefix ruby 2>/dev/null || true)"
-    if [[ -n "$brew_ruby" && -x "${brew_ruby}/bin/ruby" ]]; then
-      export PATH="${brew_ruby}/bin:${PATH}"
-    fi
-  fi
-  bundle config set --local path 'vendor/bundle'
-  bundle install
-  (cd "$APP_DIR/ios" && bundle exec pod install)
+  (cd "$APP_DIR/ios" && project_bundle exec pod install)
   ok "iOS dependencies ready"
 else
   ok "iOS dependencies skipped (${OS})"
@@ -103,6 +103,7 @@ ok "Environment validation passed"
 
 echo
 echo "✓ Flutter SDK ready"
+echo "✓ Ruby ${RUBY_VERSION} ready (project-local selection)"
 echo "✓ Dependencies restored"
 echo "✓ Environment configured"
 echo "✓ Code generation completed"

@@ -1,0 +1,30 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:__name___domain/__name___domain.dart';
+
+part '__name___bloc.freezed.dart';
+
+@freezed
+sealed class __Pascal__State with _$__Pascal__State {
+  const factory __Pascal__State.loading() = __Pascal__Loading;
+  const factory __Pascal__State.data(List<__Pascal__Item> items) = __Pascal__Data;
+  const factory __Pascal__State.error(String message) = __Pascal__Error;
+}
+
+sealed class __Pascal__Event { const __Pascal__Event(); }
+class __Pascal__Started extends __Pascal__Event { const __Pascal__Started(); }
+
+class __Pascal__Bloc extends Bloc<__Pascal__Event, __Pascal__State> {
+  __Pascal__Bloc(this._listItems) : super(const __Pascal__Loading()) {
+    on<__Pascal__Started>((event, emit) async {
+      emit(const __Pascal__Loading());
+      try {
+        final items = await _listItems();
+        if (!emit.isDone) emit(__Pascal__Data(items));
+      } catch (_) {
+        if (!emit.isDone) emit(const __Pascal__Error('Unable to load items'));
+      }
+    });
+  }
+  final List__Pascal__Items _listItems;
+}

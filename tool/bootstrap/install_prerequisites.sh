@@ -5,6 +5,8 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 # shellcheck disable=SC1091
 source "$ROOT/tool/toolchain.env"
+# shellcheck disable=SC1091
+source "$ROOT/tool/bootstrap/ruby_env.sh"
 
 confirm() {
   local prompt="$1"
@@ -39,13 +41,44 @@ install_java_macos() {
   exit 1
 }
 
+install_project_ruby() {
+  if ! command -v rbenv >/dev/null 2>&1; then
+    if command -v brew >/dev/null 2>&1 && confirm "Install rbenv and ruby-build with Homebrew?"; then
+      brew install rbenv ruby-build
+    else
+      echo "rbenv is missing. Install it from https://github.com/rbenv/rbenv." >&2
+      exit 1
+    fi
+  fi
+  if ! rbenv commands | grep -qx 'install'; then
+    if command -v brew >/dev/null 2>&1 && confirm "Install ruby-build with Homebrew?"; then
+      brew install ruby-build
+    else
+      echo "ruby-build is required to install Ruby ${RUBY_VERSION}." >&2
+      exit 1
+    fi
+  fi
+  if ! rbenv versions --bare | grep -Fxq "$RUBY_VERSION"; then
+    if confirm "Install project Ruby ${RUBY_VERSION}?"; then
+      rbenv install "$RUBY_VERSION"
+    else
+      echo "Ruby ${RUBY_VERSION} is required by .ruby-version." >&2
+      exit 1
+    fi
+  fi
+  activate_project_ruby
+}
+
 install_bundler() {
-  command -v bundle >/dev/null 2>&1 && return
-  if command -v gem >/dev/null 2>&1 && confirm "Install Bundler with gem?"; then
-    gem install bundler
+  local detected=""
+  detected="$(project_bundle --version 2>/dev/null | awk '{print $3}' || true)"
+  [[ "$detected" == "$BUNDLER_VERSION" ]] && return
+  if confirm "Install Bundler ${BUNDLER_VERSION} for project Ruby ${RUBY_VERSION}?"; then
+    gem install bundler -v "$BUNDLER_VERSION" --no-document
+    rbenv rehash
     return
   fi
-  echo "Bundler is missing. Install it with: gem install bundler" >&2
+  echo "Bundler ${BUNDLER_VERSION} is required for project Ruby ${RUBY_VERSION}." >&2
   exit 1
 }
 
@@ -61,9 +94,10 @@ check_xcode() {
 }
 
 install_fvm
+install_project_ruby
+install_bundler
 if [[ "$(uname -s)" == "Darwin" ]]; then
   install_java_macos
-  install_bundler
   check_xcode
 fi
 

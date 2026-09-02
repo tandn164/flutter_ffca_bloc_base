@@ -1,0 +1,8 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+part '__name___item.freezed.dart';
+
+@freezed
+abstract class __Pascal__Item with _$__Pascal__Item {
+  const factory __Pascal__Item({required String id, required String title}) = ___Pascal__Item;
+}

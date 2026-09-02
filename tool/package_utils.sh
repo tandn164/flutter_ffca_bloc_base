@@ -22,14 +22,18 @@ workspace_library_packages() {
 }
 
 codegen_packages() {
-  find shared features \
+  find shared features "apps/${APP:-sample_app}" \
     -type f \
-    -name build.yaml \
+    -name pubspec.yaml \
     -not -path '*/build/*' \
     -not -path '*/.dart_tool/*' \
     -print \
-    | sed 's#/build.yaml$##' \
-    | LC_ALL=C sort
+    | LC_ALL=C sort \
+    | while IFS= read -r pubspec; do
+        if grep -q '^  build_runner:' "$pubspec"; then
+          dirname "$pubspec"
+        fi
+      done
 }
 
 is_flutter_package() {

@@ -18,6 +18,12 @@
 !**/.env.staging
 !**/.env.production
 
+# App-owned Firebase configuration and release credentials
+**/google-services.json
+**/GoogleService-Info.plist
+**/.secrets/*
+!**/.secrets/.gitkeep
+
 # Bundler (project-local gems)
 /vendor/bundle/
 .bundle/

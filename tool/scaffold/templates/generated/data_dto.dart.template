@@ -1,0 +1,13 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:__name___domain/__name___domain.dart';
+
+part '__name___item_dto.freezed.dart';
+part '__name___item_dto.g.dart';
+
+@freezed
+abstract class __Pascal__ItemDto with _$__Pascal__ItemDto {
+  const __Pascal__ItemDto._();
+  const factory __Pascal__ItemDto({required String id, required String title}) = ___Pascal__ItemDto;
+  factory __Pascal__ItemDto.fromJson(Map<String, dynamic> json) => _$__Pascal__ItemDtoFromJson(json);
+  __Pascal__Item toEntity() => __Pascal__Item(id: id, title: title);
+}

@@ -23,7 +23,7 @@ String ws(String relative) => '${workspaceRoot().path}/$relative';
 void main() {
   test('feature domain layers do not import Flutter, HTTP, or Overlay', () {
     final files = [
-      ...Directory(ws('features/feed/feed_domain/lib'))
+      ...Directory(ws('features/sample/sample_domain/lib'))
           .listSync(recursive: true),
       ...Directory(ws('features/auth/auth_domain/lib'))
           .listSync(recursive: true),

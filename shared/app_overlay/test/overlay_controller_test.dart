@@ -5,7 +5,8 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   test('loading handles are idempotent and reference counted', () {
-    final controller = OverlayController(connectivity: FakeConnectivity());
+    final controller =
+        OverlayController(connectivity: MutableConnectivityHint());
     final first = controller.showLoading();
     final second = controller.showLoading();
 
@@ -19,7 +20,7 @@ void main() {
   });
 
   test('page policy overrides the app default', () {
-    final connectivity = FakeConnectivity()..setOffline(true);
+    final connectivity = MutableConnectivityHint()..setOffline(true);
     final controller = OverlayController(
       connectivity: connectivity,
       defaultPageConfig: const PageConfig(
@@ -38,7 +39,8 @@ void main() {
 
   testWidgets('toasts occupy one fixed slot and advance after duration',
       (tester) async {
-    final controller = OverlayController(connectivity: FakeConnectivity());
+    final controller =
+        OverlayController(connectivity: MutableConnectivityHint());
     controller.showToast(
       type: ToastType.success,
       message: 'first',
@@ -70,7 +72,8 @@ void main() {
 
   testWidgets('host covers the complete child and accepts custom loading',
       (tester) async {
-    final controller = OverlayController(connectivity: FakeConnectivity());
+    final controller =
+        OverlayController(connectivity: MutableConnectivityHint());
     controller.showLoading(
       contentBuilder: (_) => const Text('custom-loading'),
     );

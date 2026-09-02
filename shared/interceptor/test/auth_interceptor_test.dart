@@ -43,7 +43,7 @@ void main() {
     var calls = 0;
     final interceptor = AuthInterceptor(
       session: session,
-      connectivity: FakeConnectivity(),
+      connectivity: MutableConnectivityHint(),
     );
 
     final response = await interceptor.intercept(
@@ -63,7 +63,7 @@ void main() {
     final session = _Session()..revoked = true;
     final interceptor = AuthInterceptor(
       session: session,
-      connectivity: FakeConnectivity(),
+      connectivity: MutableConnectivityHint(),
     );
 
     await interceptor.intercept(

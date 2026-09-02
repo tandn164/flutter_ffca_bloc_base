@@ -27,12 +27,14 @@ help:
 	@echo "  make doctor     check this machine has the required prerequisites"
 	@echo "  make get        dart pub get (Dart pub workspace root)"
 	@echo "  make init       doctor → FVM → pub get → .env → codegen → iOS (macOS) → validate"
-	@echo "  make codegen    gen-l10n for apps/\$$APP + feature Chopper APIs"
+	@echo "  make codegen    generate l10n, models/JSON, DI, routes, and Chopper APIs"
+	@echo "  make codegen-watch PACKAGE=features/sample/sample_data"
+	@echo "  make codegen-check verify committed generated output"
 	@echo "  make lint       dart analyze (apps/\$$APP + packages)"
 	@echo "  make test       apps/\$$APP tests + package tests"
 	@echo "  make run        flutter run --flavor \$$FLAVOR in apps/\$$APP"
 	@echo "  make l10n       pull Google Sheet CSV and generate ARB/localizations"
-	@echo "  make release    interactive Android/iOS build and upload wizard"
+	@echo "  make release    export APK/AAB/IPA or upload to Firebase/TestFlight/App Store"
 	@echo "  make setup-hooks install pre-commit and commit-message validation"
 	@echo "  make new-feature NAME=orders [APP=sample_app] [ROUTE_KIND=public|tab]"
 	@echo "  make delete-feature NAME=orders [APP=sample_app] CONFIRM=1"
@@ -55,6 +57,13 @@ init: _check_app
 
 codegen: _check_app
 	@APP="$(APP)" bash tool/codegen_all.sh
+
+.PHONY: codegen-watch codegen-check
+codegen-watch:
+	@APP="$(APP)" PACKAGE="$(PACKAGE)" bash tool/codegen_watch.sh
+
+codegen-check: _check_app
+	@APP="$(APP)" bash tool/codegen_check.sh
 
 lint: _check_app
 	@APP="$(APP)" bash tool/analyze_all.sh

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="fastlane.lanes">
+    
+    
+    
+      
+      <testcase classname="fastlane.lanes" name="0: default_platform" time="0.000223">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="1: fvm flutter build apk --flavor dev --release --build-name 1.0.0 --build-number 1 --dart-define\=FLAVOR\=dev" time="28.949563">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="2: firebase_app_distribution" time="9.369378">
+        
+      </testcase>
+    
+  </testsuite>
+</testsuites>

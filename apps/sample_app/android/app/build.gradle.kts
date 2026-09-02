@@ -4,6 +4,19 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+val firebaseConfigFiles = fileTree("src") {
+    include("*/google-services.json")
+}.files
+val usesFirebase = file("../../pubspec.yaml").readText().contains(Regex("(?m)^\\s+firebase_core:"))
+if (usesFirebase && firebaseConfigFiles.isEmpty()) {
+    throw GradleException(
+        "firebase_core is enabled but android/app/src/<flavor>/google-services.json is missing.",
+    )
+}
+if (firebaseConfigFiles.isNotEmpty()) {
+    apply(plugin = "com.google.gms.google-services")
+}
+
 android {
     namespace = "com.company.flutter_ffca_base"
     compileSdk = 35

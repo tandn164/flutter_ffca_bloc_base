@@ -95,7 +95,7 @@ void main() {
     expect(File(ws('apps/sample_app/pubspec.yaml')).existsSync(), isTrue);
   });
 
-  for (final feature in ['feed', 'auth', 'profile', 'onboarding']) {
+  for (final feature in ['sample', 'auth', 'profile', 'onboarding']) {
     test('$feature packages do not import the app or GetIt', () {
       _assertNoAppOrGetIt(ws('features/$feature/${feature}_domain/lib'));
       _assertNoAppOrGetIt(ws('features/$feature/${feature}_data/lib'));
@@ -120,7 +120,7 @@ void main() {
   });
 
   test('feature packages remain unaware of app composition adapters', () {
-    for (final feature in ['auth', 'feed', 'profile', 'onboarding']) {
+    for (final feature in ['auth', 'sample', 'profile', 'onboarding']) {
       final root = ws('features/$feature');
       for (final file in Directory(root)
           .listSync(recursive: true)
@@ -147,7 +147,9 @@ void main() {
   test('shared packages do not import the app or feature packages', () {
     const forbidden = [
       'package:sample_app/',
-      'package:feed_',
+      'package:sample_domain/',
+      'package:sample_data/',
+      'package:sample_presentation/',
       'package:auth_',
       'package:profile_',
       'package:onboarding_',

@@ -6,7 +6,7 @@ import 'package:onboarding_data/onboarding_data.dart';
 import 'package:onboarding_domain/onboarding_domain.dart';
 import 'package:onboarding_presentation/onboarding_presentation.dart';
 
-const demoOnboardingFlowId = 'demo-main-v1';
+const sampleOnboardingFlowId = 'sample-main-v1';
 
 void registerOnboardingDependencies(GetIt sl) {
   sl
@@ -29,7 +29,7 @@ List<RouteBase> createOnboardingRoutes(GetIt sl) {
         steps: [
           OnboardingStep(
             title: 'Reusable capabilities',
-            description: 'The demo app composes features from the base.',
+            description: 'The sample app composes features from the base.',
             illustration: (_) => const Icon(Icons.extension, size: 96),
           ),
           OnboardingStep(
@@ -39,7 +39,7 @@ List<RouteBase> createOnboardingRoutes(GetIt sl) {
           ),
         ],
         onComplete: () async {
-          await sl<CompleteOnboarding>()(demoOnboardingFlowId);
+          await sl<CompleteOnboarding>()(sampleOnboardingFlowId);
           if (context.mounted) context.go('/home');
         },
         onSkip: () => context.go('/home'),

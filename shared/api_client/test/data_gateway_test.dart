@@ -35,13 +35,13 @@ DataGateway _gw({
   required _CountingTransport transport,
   CacheStore? cache,
   Outbox? outbox,
-  FakeConnectivity? net,
+  MutableConnectivityHint? net,
   List<ApiInterceptor> interceptors = const [],
 }) {
   return DataGateway(
     client: ApiClient(transport: transport, interceptors: interceptors),
     cache: cache,
-    connectivity: net ?? FakeConnectivity(),
+    connectivity: net ?? MutableConnectivityHint(),
     outbox: outbox,
   );
 }
@@ -49,13 +49,13 @@ DataGateway _gw({
 void main() {
   late _CountingTransport transport;
   late MemoryCacheStore store;
-  late FakeConnectivity net;
+  late MutableConnectivityHint net;
   late MemoryOutbox outbox;
 
   setUp(() {
     transport = _CountingTransport();
     store = MemoryCacheStore();
-    net = FakeConnectivity();
+    net = MutableConnectivityHint();
     outbox = MemoryOutbox();
   });
 

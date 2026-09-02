@@ -15,8 +15,11 @@ make l10n APP=sample_app
 make release APP=sample_app
 ```
 
-`tool/toolchain.env` is the version contract. Scripts do not silently switch
-Xcode, signing identities, or upload destinations.
+`tool/toolchain.env`, `.fvmrc`, and `.ruby-version` are the version contract.
+FVM isolates Flutter, while rbenv selects the pinned Ruby only inside this
+repository. Bundler installs Fastlane, CocoaPods, and plugins into the ignored
+`vendor/bundle` directory. Scripts do not silently switch Xcode, signing
+identities, or upload destinations.
 
 ## Package discovery
 

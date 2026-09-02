@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ui_kit/ui_kit.dart';
 
-import '../../generated/l10n/l10n.dart';
-
 class AppShell extends StatelessWidget {
   const AppShell({super.key, required this.navigationShell});
 
@@ -11,15 +9,14 @@ class AppShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final s = S.of(context)!;
-    final destinations = [
+    const destinations = [
       AdaptiveDestination(
-        icon: const Icon(Icons.check_box_outlined),
-        label: s.home,
+        icon: Icon(Icons.check_box_outlined),
+        label: 'Capabilities',
       ),
       AdaptiveDestination(
-        icon: const Icon(Icons.person_outline),
-        label: s.profile,
+        icon: Icon(Icons.view_list_outlined),
+        label: 'Sample list',
       ),
     ];
 

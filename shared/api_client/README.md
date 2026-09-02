@@ -3,6 +3,9 @@
 Generic HTTP and data-access infrastructure. The package contains no business
 endpoint and does not depend on feature packages.
 
+See [Component connections and request-flow diagrams](ARCHITECTURE.md) for how
+the client, gateway, cache, interceptors, and offline queue work together.
+
 ## Main APIs
 
 - `ApiClient` sends requests through a pluggable `ApiTransport` and interceptors.
@@ -17,7 +20,7 @@ lives in the standalone `app_connectivity` package.
 
 ```dart
 final result = await gateway.read(
-  request: const ApiRequest(method: 'GET', path: '/tasks'),
+  path: '/tasks',
   decode: (json) => TaskDto.fromJson(json as Map<String, dynamic>),
 );
 ```

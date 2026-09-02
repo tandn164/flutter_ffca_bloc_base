@@ -28,11 +28,11 @@ Presentation ─────▶ Domain ◀───── Data
 
 ```text
 apps/
-  sample_app/                  # bootstrap, DI, router, theme, native projects, fake API
+  sample_app/                  # thin host plus a UI capability showcase
 
 features/
   auth/                      # credentials and authenticated session
-  feed/                      # paginated task/feed example
+  sample/                    # clean architecture, refresh, pagination example
   onboarding/                # persisted onboarding flow
   profile/                   # profile load/update/sign-out
 
@@ -79,7 +79,7 @@ package includes a README.
 
 `apps/sample_app/lib/app/features/sample_features.dart` is the single feature
 manifest. Each app-owned adapter composes one feature's dependencies, API
-service, routes or shell branch, and demo backend handler.
+service and routes or shell branch.
 
 To add a feature to an app:
 
@@ -106,7 +106,7 @@ To remove a scaffolded app (protects `sample_app`):
 CONFIRM=1 make delete-app NAME=merchant_app
 ```
 
-To remove a scaffolded feature (protects `auth`, `feed`, `profile`, `onboarding`):
+To remove a scaffolded feature (protects `auth`, `sample`, `profile`, `onboarding`):
 
 ```bash
 CONFIRM=1 make delete-feature NAME=orders APP=sample_app
@@ -227,15 +227,12 @@ only when required.
 ## Sample app
 
 `sample_app` demonstrates composition, not a second framework layer. It retains
-only app-specific concerns: bootstrap, feature manifest, router, theme, splash,
-flavors, provider selection, native projects, and an in-process fake backend.
-
-When `API_BASE_URL` is empty or a placeholder, the app uses the fake backend.
-
-```text
-Email:    demo@example.com
-Password: password
-```
+only app-specific concerns: bootstrap, feature manifest, router, theme, flavors,
+native projects, and a capability showcase UI. Buttons demonstrate reusable
+overlays, connectivity policies, skeletons, validation, logging, deep links,
+and onboarding. The Sample list is a complete FFCA example for pagination,
+pull-to-refresh, and mutations, backed by an explicit local repository rather
+than a fake HTTP server.
 
 Run it with:
 
@@ -248,11 +245,14 @@ Supported flavors are `dev`, `stg`, and `prod`.
 
 ## Environment setup
 
-The toolchain contract lives in `tool/toolchain.env` and `.fvmrc`.
+The toolchain contract lives in `tool/toolchain.env`, `.fvmrc`, and
+`.ruby-version`. Flutter is selected through FVM; Ruby is selected per project
+through rbenv, without replacing the macOS system Ruby or changing another
+repository's version.
 
 ```bash
 make doctor   # report missing or mismatched tools
-make init     # offer to install prerequisites, select Flutter, get, generate, validate
+make init     # offer to install prerequisites, select Flutter/Ruby, get, generate, validate
 ```
 
 Bootstrap asks before installing host tools. Xcode installation or switching is
@@ -260,15 +260,28 @@ never silent because it affects the whole macOS machine.
 
 ## Build and release
 
+See [Code generation](tool/CODE_GENERATION.md) for Freezed/JSON, feature-local DI,
+typed routes, scaffold conventions, watch mode and CI validation.
+
+For a first Firebase upload, place the Google Service config in the selected
+flavor folder, then authenticate with `firebase login` (Firebase CLI) **or** a
+service-account credential. The config identifies the app; it does not grant
+upload permission. App ID overrides are optional. Follow the
+[first-time Firebase setup guide](tool/release/README.md#first-time-firebase-setup)
+before your first release; the wizard checks Firebase access before building.
+
 ```bash
 make release
 ```
 
 The interactive release script asks for platform, flavor, build name, build
-number, artifact type, signing mode, and destination. Supported destinations:
+number, destination, and signing mode. The wizard delegates build and upload to
+the app's Fastlane lanes and can also run non-interactively in CI. Supported
+destinations:
 
-- Android APK or App Bundle: local export or Firebase App Distribution.
-- iOS IPA: local export, TestFlight internal/external, or App Store upload.
+- Android APK/App Bundle export and Firebase App Distribution.
+- iOS IPA export, Firebase App Distribution, TestFlight internal/external, and
+  App Store upload.
 - iOS automatic signing or Fastlane Match-based certificate signing.
 
 The script does not publish an App Store release automatically. Credentials,

@@ -64,7 +64,7 @@ void main() {
 
   test('coordinator retries after backoff while connectivity stays online',
       () async {
-    final connectivity = FakeConnectivity();
+    final connectivity = MutableConnectivityHint();
     final sent = Completer<void>();
     final outbox = PersistentOutbox(
       store: MemoryKeyValueStore(),

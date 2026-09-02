@@ -2,6 +2,10 @@
 
 Generate a new feature package set or clone an app skeleton.
 
+New features include Freezed models/state, generated JSON, feature-local
+Injectable registration, typed route helpers, an injected BLoC page and tests.
+See [Code generation](../CODE_GENERATION.md) for the workflow and version contract.
+
 ## New feature
 
 Creates `features/<name>/{domain,data,presentation}`, registers workspace
@@ -31,7 +35,7 @@ make test APP=sample_app
 ## Delete feature
 
 Removes `features/<name>`, unregisters workspace packages, and unwires the app
-adapter/manifest. Built-in demo features (`auth`, `feed`, `profile`,
+adapter/manifest. Built-in reusable/sample features (`auth`, `sample`, `profile`,
 `onboarding`) are protected.
 
 ```bash
@@ -60,6 +64,10 @@ new app. If the run dropdown still shows only `sample_app`, restart the IDE or r
 ```bash
 bash tool/scaffold/register_ide_app.sh merchant_app
 ```
+
+It also creates empty `dev`, `stg`, and `prod` Firebase configuration folders
+for Android and iOS plus an ignored `.secrets` directory. Firebase client files
+and credentials from the source app are deliberately excluded from the copy.
 
 Then trim the feature manifest and update native bundle identifiers.
 

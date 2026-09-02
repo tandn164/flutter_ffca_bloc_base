@@ -10,7 +10,7 @@ NAME="${NAME:-}"
 APP="${APP:-sample_app}"
 WIRE="${WIRE:-1}"
 CONFIRM="${CONFIRM:-0}"
-PROTECTED="${PROTECTED:-auth,feed,profile,onboarding}"
+PROTECTED="${PROTECTED:-auth,sample,profile,onboarding}"
 
 require_name "NAME" "$NAME"
 
@@ -74,6 +74,13 @@ if [[ "$WIRE" == "1" ]]; then
   if [[ -f "$ADAPTER" ]]; then
     info "remove adapter ${NAME}_feature.dart"
     rm -f "$ADAPTER"
+  fi
+  # Generated companion files belong to this explicitly selected feature only.
+  rm -f "$APP_DIR/lib/app/features/${NAME}_feature.g.dart"
+  rm -f "$APP_DIR/lib/app/features/$NAME/${NAME}_di.dart" \
+    "$APP_DIR/lib/app/features/$NAME/${NAME}_di.config.dart"
+  if [[ -d "$APP_DIR/lib/app/features/$NAME" ]]; then
+    rmdir "$APP_DIR/lib/app/features/$NAME" 2>/dev/null || true
   fi
 
   MANIFEST="$APP_DIR/lib/app/features/${APP}_features.dart"
